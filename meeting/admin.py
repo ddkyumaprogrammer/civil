@@ -1,4 +1,6 @@
 from django.contrib import admin
+from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+
 from django_jalali.admin.widgets import AdminjDateWidget
 from django.forms import ModelForm ,forms
 from django_jalali.admin import JDateFieldListFilter
@@ -22,6 +24,8 @@ class Placesadmin(admin.ModelAdmin):
 class PlacesInLine(admin.TabularInline):
     model = Places
     extra = 1
+    can_delete = True
+
 @admin.register(Peoples)
 class Peoplesadmin(admin.ModelAdmin):
     list_display = ('first_name','last_name','mobile','username','is_legal')
@@ -46,6 +50,8 @@ class Sessionsadmin(admin.ModelAdmin):
     list_display = ('meeting_title','start_time','end_time','meeting_owner','place',)
     search_fields = ['meeting_title','start_time',]
     list_filter = (('start_time',JDateFieldListFilter),)
+    # list_filter = (('start_time',DateRangeFilter),)
+
     exclude = ('se_num',)
     inlines = [
         AudiencesInLine
