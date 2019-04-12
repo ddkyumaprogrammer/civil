@@ -1,8 +1,5 @@
 from django.contrib import admin
-from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
-
-from django_jalali.admin.widgets import AdminjDateWidget
-from django.forms import ModelForm ,forms
+# from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 from django_jalali.admin import JDateFieldListFilter
 from mptt.admin import MPTTModelAdmin
 from .models import *
