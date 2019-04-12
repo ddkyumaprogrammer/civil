@@ -30,7 +30,10 @@ SECRET_KEY = 'e4(^948$d-9)r)c)ofo$v%$h^=fgxx50&(c91)tm))p2ik%#rr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','185.211.57.73']
+
+ALLOWED_HOSTS = ['127.0.0.1','185.211.57.73','dna-h.ir']
+
+
 
 # AUTH_USER_MODEL = 'meeting.Ranks'
 AUTH_USER_MODEL = 'meeting.Peoples'
