@@ -33,8 +33,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','185.211.57.73','dna-h.ir']
 
-
-# AUTH_USER_MODEL = 'meeting.Ranks'
 AUTH_USER_MODEL = 'meeting.Peoples'
 
 # Application definition
@@ -62,7 +60,7 @@ INSTALLED_APPS = (
     'meeting',
     'mptt',
     'api',
-    'rangefilter',
+    # 'rangefilter',
 
 )
 
