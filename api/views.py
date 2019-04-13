@@ -176,3 +176,7 @@ class RepViewSet(viewsets.ModelViewSet):
 #
 #         serializer = SessionsSerializer(queryset, many=True)
 #         return Response(serializer.data)
+
+
+def hello(request):
+    return HttpResponse("Hello world")
