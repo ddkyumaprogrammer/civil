@@ -152,6 +152,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -187,6 +188,16 @@ SMS_IR = {
     'VERIFICATION_URL': 'http://RestfulSms.com/api/VerificationCode',
     'FAST_SEND_URL': 'http://RestfulSms.com/api/UltraFastSend',
 }
+
+SMS_IR = {
+    'SECRET_KEY': '2b86140e6c2598128da6140',
+    'USER_API_KEY': '2b86140e6c2598128da6140',
+    'TOKEN_KEY_URL': 'http://RestfulSms.com/api/Token/',
+    'ACTIVE_TOKEN_KEY': 'UFV0ZkQ2YTVkTWZZbGZlRXBVUnVnNy8xSkJZeDY4NjhKejdtUHl6dmt0Mk9EaWh1R0cyU0k4akErRG9YTy9DVW9SREN5N3hVajhsK0VVQlZvMndRYWVPL1BaZjZhL3ErMXU0ZWN2QlpzTWc2KzRuZmwwSVdpdldPbDUyZHltL1BpMjBEQTlsbnlybVNkdWdIS3NRclYxWW9vWjJCUVNLSnB6R2tXZzg2dGNZPQ==',
+    'VERIFICATION_URL': 'http://RestfulSms.com/api/VerificationCode',
+    'FAST_SEND_URL': 'http://RestfulSms.com/api/UltraFastSend',
+}
+
 
 CONSTANCE_BACKEND = 'constance.backends.redisd.RedisBackend'
 
