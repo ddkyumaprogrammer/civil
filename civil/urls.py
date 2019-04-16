@@ -25,7 +25,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/', include('api.urls')),
     path(r'', include('drfpasswordless.urls')),
-    path(r'hello/', hello),
     path(r'celery-sandbox/', include('celery_sandbox.urls'))
 
 

@@ -6,9 +6,10 @@ from rest_framework import viewsets, status
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from drfpasswordless.tasks import refresh_sms_token
+from jalali import jalali
 from .serializers import *
 from django.forms.models import model_to_dict
-
+from meeting.models import *
 
 
 
@@ -21,16 +22,45 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
         serializer = SessionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        obj = serializer.save()
-        obj.meeting_owner = request.user
-        obj.save()
-        if 'audiences' in request.data:
-            audiences = request.data.get('audiences')
-            for audience in audiences:
-                ppl = Peoples.objects.get(**audience)
-                Audiences.objects.create(session=obj, people=ppl)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        _sessions = Sessions.objects.all()
+        # obj = serializer.save()
+        intrposition = []
+        for _session in _sessions:
+            sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), '%Y-%m-%d %H:%M:%S%z').date()
+            edate = datetime.datetime.strptime(str(self.request.data.get('end_time')), '%Y-%m-%d %H:%M:%S%z').date()
+            stime = datetime.datetime.strptime(str(self.request.data.get('start_time')), '%Y-%m-%d %H:%M:%S%z').time()
+            etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), '%Y-%m-%d %H:%M:%S%z').time()
+            _session_date = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
+            _session_time = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').time()
+
+            if _session_date == sdate:
+                if stime <= _session_time <= etime:
+                    intrposition.append(_session.meeting_title)
+                    # gholi = Sessions.objects.filter(start_time__range =(sdate , edate))
+            if str(_session.end_time.date())== str(edate):
+                if stime <= _session.end_time.time() <= etime:
+                    intrposition.append(_session.meeting_title)
+                    # goli = Sessions.objects.filter(end_time__range =(sdate , edate))
+
+
+        if intrposition != []:
+            return Response( ', '.join(map(str, intrposition))+"--"+"تداخل با جلسه")
+
+
+        else:
+            obj = serializer.save()
+            obj.meeting_owner = request.user
+            obj.save()
+            if 'audiences' in request.data:
+                audiences = request.data.get('audiences')
+                for audience in audiences:
+                    ppl = Peoples.objects.get(mobile = audience.get('people')).id
+                    rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
+                    sessn = Sessions.objects.get(id = obj.id).id
+                    Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 
@@ -106,7 +136,7 @@ def get_childern_view_by_token(request):
                 if _rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
                     if pid == _rank.parent_id:
                         child.append(_rank.rank_owner_id)
-                        _parent_id.append(_rank.id)
+                        _parent_id.append()
 
     return JsonResponse(child, safe=False)
 
@@ -150,33 +180,54 @@ class RepViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(model_to_dict(obj), safe=False)
 
-#
-#
-# class SessionsownerViewSet(viewsets.ModelViewSet):
-#     permission_classes = (IsAuthenticated,)
-#     queryset = Sessions.objects.all().order_by('start_time')
-#     serializer_class = SessionsSerializer
-#
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-#         queryset = queryset.filter(meeting_owner=self.request.user)
-#         date = datetime.datetime.strptime(self.request.data.get('start_time'), "%Y-%m-%d")
-#
-#         # queryset = queryset.filter(start_time__range = ((request.data.get('start_time').format("%Y-%m-%d %H:%M:%S+%f")),(request.data.get('end_time').format("%Y-%m-%d %H:%M:%S+%f"))))
-#         queryset = queryset.filter(start_time__range = ("date","1400-09-03"))
-#
-#         # queryset = queryset.filter(start_time__day=12)
-#
-#         page = self.paginate_queryset(queryset)
-#         if page is not None:
-#             serializer = SessionsSerializer(page, many=True)
-#             return self.get_paginated_response(serializer.data)
-#
-#
-#
-#         serializer = SessionsSerializer(queryset, many=True)
-#         return Response(serializer.data)
 
 
-def hello(request):
-    return HttpResponse("Hello world")
+
+
+@api_view(['POST'])
+def  get_sessions_by_owner(request):
+    # sdate = jalali.Persian(request.data.get('s_time')).gregorian_datetime()
+    sdate = datetime.datetime.strptime(request.data.get('time'), "%Y-%m-%d")
+    s_sessions = []
+
+    _sessions = Sessions.objects.all()
+    for _session in _sessions:
+        stime = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
+        if stime.year == sdate.year:
+            if stime.month == sdate.month:
+                if stime.day == sdate.day:
+                    s_sessions.append({'id':_session.id , 'meeting_title' : _session.meeting_title,
+                    'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
+                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time)})
+
+    _audiences = Audiences.objects.all()
+    for _audience in _audiences:
+        sstime = datetime.datetime.strptime(str(_audience.session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
+        if sstime.year == sdate.year:
+            if sstime.month == sdate.month:
+                if sstime.day == sdate.day:
+                    s_sessions.append({'id':_audience.session.id , 'title' : _audience.session.meeting_title,
+                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
+                                       'start_time': str(_audience.session.start_time) , 'end_time' : str(_audience.session.end_time)})
+
+    return JsonResponse(s_sessions, safe=False)
+
+
+
+class SessionidViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Sessions.objects.all()
+    serializer_class = SessionsSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(meeting_owner=self.request.user)
+        queryset = queryset.filter(id=self.request.data.get('id'))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = SessionsSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = SessionsSerializer(queryset, many=True)
+        return Response(serializer.data)
+
