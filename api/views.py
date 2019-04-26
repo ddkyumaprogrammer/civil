@@ -118,7 +118,8 @@ def refresh_sms_token_view(request):
     except Exception as e:
         return HttpResponse(status=500)
 
-    next_url = request.GET.get('next')
+
+    # next_url = request.GET.get('next')
     # return redirect('Http://127.0.0.1:8000/admin' + next_url)
     return redirect('Http://127.0.0.1:8000/admin' )
 
