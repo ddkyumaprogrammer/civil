@@ -5,11 +5,6 @@ from json import loads, dumps
 from requests import post
 from jdatetime import datetime
 # from celery import task
-#
-#
-# @task
-# def task_number_one():
-#     pass
 
 
 @app.task

@@ -23,9 +23,6 @@ def send_ultrafast_sms(**kwargs):
     try:
         r = post(settings.SMS_IR['FAST_SEND_URL'], dumps(data), headers=headers)
 
-        # email = EmailMessage('ثبت سرویس','کاربر {} سرویس {} را ثبت کرد.'.format(kwargs['mobile_num'],kwargs['OrderType']) ,'karbamaregisterservice@gmail.com',['karbamabnd@gmail.com','mohammadbehnam72@gmail.com'],['karbamaregisterservice@gmail.com'])
-        # email = EmailMessage('ثبت سرویس','کاربر {} سرویس {} را ثبت کرد.'.format(kwargs['mobile_num'],kwargs['OrderType']) ,'karbamaregisterservice@gmail.com',['bineiaz@gmail.com','s.n.bahador@gmail.com'],['karbamaregisterservice@gmail.com'])
-        # email.send()
 
         response = loads(r.text)
         if response['IsSuccessful'] is True:

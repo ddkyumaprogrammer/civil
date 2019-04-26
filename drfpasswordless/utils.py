@@ -210,7 +210,7 @@ def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
             print('token_key sms.ir error {}'.format(e))
             return False
     params = []
-    data = {"TemplateId": 2088,
+    data = {"TemplateId": 9460,
             "Mobile": getattr(user, api_settings.PASSWORDLESS_USER_MOBILE_FIELD_NAME)}
     params.append({'Parameter': "VerificationCode", 'ParameterValue': mobile_token.key})
     data['ParameterArray'] = params
@@ -234,22 +234,22 @@ def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
         return False
 
 
-def send_app_link_sms(mobile_num, link):
-    data = {"ParameterArray": [{"Parameter": "Link", "ParameterValue": link}],
-            "Mobile": mobile_num,
-            "TemplateId": 1915}
-    headers = {"Content-Type": "application/json", "x-sms-ir-secure-token": config.ACTIVE_TOKEN_KEY}
-    try:
-        r = post(settings.SMS_IR['FAST_SEND_URL'], dumps(data), headers=headers)
-        response = loads(r.text)
-        if response['IsSuccessful'] is True:
-            print('sms sent successfully: {}'.format(response['IsSuccessful']))
-            return True
-        elif response['Message'] == "Token منقضی شده است . Token جدیدی درخواست کنید":
-            print('token expired: {}'.format(response['Message']))
-    except Exception as e:
-        print(e)
-        return False
+# def send_app_link_sms(mobile_num, link):
+#     data = {"ParameterArray": [{"Parameter": "Link", "ParameterValue": link}],
+#             "Mobile": mobile_num,
+#             "TemplateId": 1915}
+#     headers = {"Content-Type": "application/json", "x-sms-ir-secure-token": config.ACTIVE_TOKEN_KEY}
+#     try:
+#         r = post(settings.SMS_IR['FAST_SEND_URL'], dumps(data), headers=headers)
+#         response = loads(r.text)
+#         if response['IsSuccessful'] is True:
+#             print('sms sent successfully: {}'.format(response['IsSuccessful']))
+#             return True
+#         elif response['Message'] == "Token منقضی شده است . Token جدیدی درخواست کنید":
+#             print('token expired: {}'.format(response['Message']))
+#     except Exception as e:
+#         print(e)
+#         return False
 
 
 def send_ultrafast_sms(**kwargs):

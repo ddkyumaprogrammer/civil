@@ -53,6 +53,8 @@ INSTALLED_APPS = (
     'bootstrap4',
     'debug_toolbar',
     'celery',
+    'django_celery_results',
+    # 'django_celery_beat',
     'redis',
     'constance',
     'multiselectfield',
@@ -182,19 +184,10 @@ PASSWORDLESS_AUTH = {
 
 
 SMS_IR = {
-    'SECRET_KEY': 'bigblackb3ar',
-    'USER_API_KEY': '2b86140e6c2598128da6140',
+    'SECRET_KEY': 'bigblackb3@r',
+    'USER_API_KEY': '8cd5d8a0dd31254b5ce1e32d',
     'TOKEN_KEY_URL': 'http://RestfulSms.com/api/Token/',
-    'ACTIVE_TOKEN_KEY': 'UFV0ZkQ2YTVkTWZZbGZlRXBVUnVnNy8xSkJZeDY4NjhKejdtUHl6dmt0Mk9EaWh1R0cyU0k4akErRG9YTy9DVW9SREN5N3hVajhsK0VVQlZvMndRYWVPL1BaZjZhL3ErMXU0ZWN2QlpzTWc2KzRuZmwwSVdpdldPbDUyZHltL1BpMjBEQTlsbnlybVNkdWdIS3NRclYxWW9vWjJCUVNLSnB6R2tXZzg2dGNZPQ==',
-    'VERIFICATION_URL': 'http://RestfulSms.com/api/VerificationCode',
-    'FAST_SEND_URL': 'http://RestfulSms.com/api/UltraFastSend',
-}
-
-SMS_IR = {
-    'SECRET_KEY': '2b86140e6c2598128da6140',
-    'USER_API_KEY': '2b86140e6c2598128da6140',
-    'TOKEN_KEY_URL': 'http://RestfulSms.com/api/Token/',
-    'ACTIVE_TOKEN_KEY': 'UFV0ZkQ2YTVkTWZZbGZlRXBVUnVnNy8xSkJZeDY4NjhKejdtUHl6dmt0Mk9EaWh1R0cyU0k4akErRG9YTy9DVW9SREN5N3hVajhsK0VVQlZvMndRYWVPL1BaZjZhL3ErMXU0ZWN2QlpzTWc2KzRuZmwwSVdpdldPbDUyZHltL1BpMjBEQTlsbnlybVNkdWdIS3NRclYxWW9vWjJCUVNLSnB6R2tXZzg2dGNZPQ==',
+    'ACTIVE_TOKEN_KEY': 'K2tjYjVmZEdLeVhyRlRxbUUvQ0o0YUM5b3JyQ0tNWmV0SDJYUjM2eEpSVDhiVlVCalRTQWtiSVlsMm4rTFA5SktkRUtwZW53MXgvRnhadlI0VHVqbkpoU1hPWDM1bm9MaGEyUGRyUmlYdnNKaXRnbVZQWjc3dFJyL3lHK0ptZlZwVFphNUVnUzJxbGR2R3RjNHBUUjdkNThMUHR1RTdsd0I5WVZ0Yk1EV1Uwd3hhNU5zQmJBR3FXbW5kSG81Y2Vs==',
     'VERIFICATION_URL': 'http://RestfulSms.com/api/VerificationCode',
     'FAST_SEND_URL': 'http://RestfulSms.com/api/UltraFastSend',
 }
@@ -242,7 +235,8 @@ CACHES = {
 }
 
 # celery flower -A civil --address=127.0.0.1 --port=8000
-
+# celery -A civil worker -l info
+# celery -A civil worker -l debug
 # Celery settings
 
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
@@ -259,10 +253,12 @@ CELERY_TIMEZONE = 'Asia/Tehran'
 CELERY_BEAT_SCHEDULE = {
     'refresh-sms-token-every-30-minutes': {
         'task': 'drfpasswordless.tasks.refresh_sms_token',
-        'schedule': crontab(minute='*/5'),  # refresh every 20 minutes
+        'schedule': crontab(minute ='*/15')  # refresh every 20 minutes
     },
 
 }
 CELERY_IMPORTS = ['drfpasswordless']
 
 
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
