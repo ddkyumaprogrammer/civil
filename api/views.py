@@ -6,7 +6,6 @@ from rest_framework import viewsets, status
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from drfpasswordless.tasks import refresh_sms_token
-from jalali import jalali
 from .serializers import *
 from django.forms.models import model_to_dict
 from meeting.models import *
