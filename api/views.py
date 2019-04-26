@@ -121,7 +121,7 @@ def refresh_sms_token_view(request):
 
     # next_url = request.GET.get('next')
     # return redirect('Http://127.0.0.1:8000/admin' + next_url)
-    return redirect('Http://127.0.0.1:8000/admin' )
+    return redirect('Http://185.211.57.73/admin/constance/config' )
 
 
 
