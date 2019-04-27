@@ -195,10 +195,10 @@ def send_sms_with_callback_token(user, mobile_token, **kwargs):
 
 
 def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
-    logging.basicConfig(filename='/opt/w/civil/errors.log', level=logging.DEBUG)
-    logging.debug("gf")
+    # for handler in logging.root.handlers[:]:
+    #     logging.root.removeHandler(handler)
+    # logging.basicConfig(filename='/opt/w/civil/errors.log', level=logging.DEBUG)
+    # logging.debug("gf")
     if kwargs.get('token_expired'):
         token_headers = {"Content-Type": "application/json"}
         token_data = {"UserApiKey": settings.SMS_IR['USER_API_KEY'], "SecretKey": settings.SMS_IR['SECRET_KEY']}
@@ -226,7 +226,7 @@ def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
             return True
         r = post(settings.SMS_IR['FAST_SEND_URL'], dumps(data), headers=headers)
         response = loads(r.text)
-        logging.debug (response)
+        # logging.debug (response)
         print(response)
         if response['IsSuccessful'] is True:
             print('sms sent successfully: {}'.format(response['IsSuccessful']))
