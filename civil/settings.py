@@ -187,7 +187,7 @@ SMS_IR = {
     'SECRET_KEY': 'bigblackb3@r',
     'USER_API_KEY': '8cd5d8a0dd31254b5ce1e32d',
     'TOKEN_KEY_URL': 'http://RestfulSms.com/api/Token/',
-    'ACTIVE_TOKEN_KEY': 'K2tjYjVmZEdLeVhyRlRxbUUvQ0o0YUM5b3JyQ0tNWmV0SDJYUjM2eEpSVDhiVlVCalRTQWtiSVlsMm4rTFA5SktkRUtwZW53MXgvRnhadlI0VHVqbkpoU1hPWDM1bm9MaGEyUGRyUmlYdnNKaXRnbVZQWjc3dFJyL3lHK0ptZlZwVFphNUVnUzJxbGR2R3RjNHBUUjdkNThMUHR1RTdsd0I5WVZ0Yk1EV1Uwd3hhNU5zQmJBR3FXbW5kSG81Y2Vs==',
+    'ACTIVE_TOKEN_KEY': 'K2tjYjVmZEdLeVhyRlRxbUUvQ0o0YUM5b3JyQ0tNWmV0SDJYUjM2eEpSVDhiVlVCalRTQWtiSVlsMm4rTFA5SktkRUtwZW53MXgvRnhadlI0VHVqbkpoU1hPWDM1bm9MaGEyUGRyUmlYdnRhNkhGVTBSbVhOWWVqMHA4eW9MT05jcllOR2lRZDlqQ3kvQUc4Y080Z1BkTUdxWWg3RitrWmFtU1N5MHFiY2ordVAwd0dJQy9sNUE5eDlZbnlIcVhJ',
     'VERIFICATION_URL': 'http://RestfulSms.com/api/VerificationCode',
     'FAST_SEND_URL': 'http://RestfulSms.com/api/UltraFastSend',
 }
