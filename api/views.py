@@ -115,7 +115,8 @@ def refresh_sms_token_view(request):
         return HttpResponse(status=403)
 
     try:
-        eager = refresh_sms_token()
+        eager = refresh_sms_token.apply()
+        ea = refresh_sms_token()
     except Exception as e:
         return HttpResponse(status=500)
 
