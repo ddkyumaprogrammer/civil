@@ -5,15 +5,23 @@ from json import loads, dumps
 from requests import post
 from jdatetime import datetime
 from celery import task
+import logging
 
+logger = logging.getLogger(__name__)
 
 @app.task
 def refresh_sms_token():
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    logging.basicConfig(filename='/opt/w/civil/errors.log', level=logging.DEBUG)
+    logging.debug("---------------------------------------------------")
+
     token_headers = {"Content-Type": "application/json"}
     token_data = {"UserApiKey": settings.SMS_IR['USER_API_KEY'], "SecretKey": settings.SMS_IR['SECRET_KEY']}
     try:
         r = post(settings.SMS_IR['TOKEN_KEY_URL'], dumps(token_data), headers=token_headers)
         response = loads(r.text)
+        logging.debug(response)
         if response['IsSuccessful'] is True:
             config.ACTIVE_TOKEN_KEY = response['TokenKey']
             config.LAST_UPDATE = datetime.now()
