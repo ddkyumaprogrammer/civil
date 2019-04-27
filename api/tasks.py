@@ -7,9 +7,8 @@ from jdatetime import datetime
 from celery import task
 import logging
 
-logger = logging.getLogger(__name__)
 
-# @app.task
+@app.task
 def refresh_sms_token():
     # for handler in logging.root.handlers[:]:
     #     logging.root.removeHandler(handler)
