@@ -4,7 +4,7 @@ from constance import config
 from json import loads, dumps
 from requests import post
 from jdatetime import datetime
-# from celery import task
+from celery import task
 
 
 @app.task

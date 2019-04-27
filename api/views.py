@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
-from drfpasswordless.tasks import refresh_sms_token
+# from drfpasswordless.tasks import refresh_sms_token
 from .serializers import *
+from .tasks import refresh_sms_token
 from django.forms.models import model_to_dict
 from meeting.models import *
 
@@ -120,8 +121,8 @@ def refresh_sms_token_view(request):
 
 
     # next_url = request.GET.get('next')
-    # return redirect('Http://127.0.0.1:8000/admin' + next_url)
-    return redirect('Http://185.211.57.73/admin/constance/config/' )
+    return redirect('Http://127.0.0.1:8000/admin/constance/config/')
+    # return redirect('Http://185.211.57.73/admin/constance/config/' )
 
 
 
