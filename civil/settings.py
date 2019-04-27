@@ -62,6 +62,7 @@ INSTALLED_APPS = (
     'meeting',
     'mptt',
     'api',
+    'django-db'
     # 'rangefilter',
 
 )
