@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def refresh_sms_token():
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
-    logging.basicConfig(filename='/opt/w/civil/errors.log', level=logging.DEBUG)
+    logging.basicConfig(filename='/opt/w/civil/error.log', level=logging.DEBUG)
     logging.debug("---------------------------------------------------")
 
     token_headers = {"Content-Type": "application/json"}
