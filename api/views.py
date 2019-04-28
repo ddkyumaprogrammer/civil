@@ -1,5 +1,5 @@
 import datetime
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
@@ -132,13 +132,15 @@ def get_childern_view_by_token(request):
     ranks = Ranks.objects.all()
     child = []
     _parent_id = []
-    _parent_id.append(Ranks.objects.get(rank_owner_id=request.user.id).id)
+    e = get_object_or_404(Ranks,rank_owner_id=request.user.id)
+    if e is not None:
+        _parent_id.append(e.id)
     for pid in _parent_id:
             for _rank in ranks:
                 if _rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
                     if pid == _rank.parent_id:
                         child.append(_rank.rank_owner_id)
-                        _parent_id.append()
+                        _parent_id.append(_rank.id)
 
     return JsonResponse(child, safe=False)
 
