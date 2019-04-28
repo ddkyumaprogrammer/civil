@@ -16,7 +16,7 @@ class Peoples(AbstractUser):
     is_legal = models.BooleanField(default=True, verbose_name='شخصیت حقوقی')
     image = models.ImageField(null=True, blank=True, upload_to=get_image_path)
     MOBILE_FIELD = 'mobile'
-    description = models.TextField(null=True, blank=True, verbose_name='توضیحات')
+    # description = models.TextField(null=True, blank=True, verbose_name='توضیحات')
     class Meta:
         verbose_name = 'فرد'
         verbose_name_plural = 'افراد'
