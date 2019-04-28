@@ -16,7 +16,7 @@ class Peoples(AbstractUser):
     is_legal = models.BooleanField(default=True, verbose_name='شخصیت حقوقی')
     image = models.ImageField(null=True, blank=True, upload_to=get_image_path)
     MOBILE_FIELD = 'mobile'
-    # description = models.TextField(null=True, blank=True, verbose_name='توضیحات')
+    description = models.TextField(null=True, blank=True, verbose_name='توضیحات')
     class Meta:
         verbose_name = 'فرد'
         verbose_name_plural = 'افراد'
@@ -50,7 +50,7 @@ class Places(models.Model):
 
 
 class Ranks(MPTTModel):
-    rank_name = models.CharField(max_length=50, verbose_name='نام جایگاه')
+    rank_name = models.CharField(null=True,max_length=50, verbose_name='نام جایگاه')
     rank_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='صاحب جایگاه',related_name='rank_owner',
                                   on_delete=models.CASCADE)
     parent = TreeForeignKey('self',  null=True, blank=True,verbose_name='بالا دستی',related_name='childern',
