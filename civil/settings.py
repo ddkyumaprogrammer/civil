@@ -256,6 +256,5 @@ CELERY_BEAT_SCHEDULE = {
 }
 CELERY_IMPORTS = ['drfpasswordless']
 
-
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
