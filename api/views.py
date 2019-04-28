@@ -132,7 +132,7 @@ def get_childern_view_by_token(request):
     ranks = Ranks.objects.all()
     child = []
     _parent_id = []
-    e = get_object_or_404(Ranks,rank_owner_id=request.user.id)
+    e = Ranks.objects.get(rank_owner_id=request.user.id)
     if e is not None:
         _parent_id.append(e.id)
     for pid in _parent_id:
