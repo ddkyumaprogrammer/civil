@@ -132,9 +132,10 @@ def get_childern_view_by_token(request):
     ranks = Ranks.objects.all()
     child = []
     _parent_id = []
-    e = Ranks.objects.get(rank_owner_id=request.user.id)
-    if e is not None:
-        _parent_id.append(e.id)
+    try:
+        _parent_id.append(Ranks.objects.get(rank_owner_id=request.user.id).id)
+    except Ranks.DoesNotExist:
+        _parent_id = []
     for pid in _parent_id:
             for _rank in ranks:
                 if _rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
