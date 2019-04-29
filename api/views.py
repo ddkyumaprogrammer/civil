@@ -135,6 +135,7 @@ def get_childern_view_by_token(request):
     try:
         _parent_id.append(Ranks.objects.get(rank_owner_id=request.user.id).id)
     except Ranks.DoesNotExist:
+
         _parent_id = []
     for pid in _parent_id:
             for _rank in ranks:
