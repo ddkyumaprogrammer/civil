@@ -141,7 +141,8 @@ def get_childern_view_by_token(request):
             for _rank in ranks:
                 if _rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
                     if pid == _rank.parent_id:
-                        child.append(_rank.rank_owner_id)
+                        if _rank.rank_owner_id is not None:
+                            child.append(_rank.rank_owner_id)
                         _parent_id.append(_rank.id)
 
     return JsonResponse(child, safe=False)
