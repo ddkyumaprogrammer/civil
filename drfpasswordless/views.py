@@ -1,4 +1,5 @@
 import logging
+from meeting.models import Peoples
 from rest_framework import parsers, renderers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -37,17 +38,24 @@ class AbstractBaseObtainCallbackToken(APIView):
         # Alias Type
         raise NotImplementedError
 
+
     def post(self, request, *args, **kwargs):
         if self.alias_type.upper() not in api_settings.PASSWORDLESS_AUTH_TYPES:
             # Only allow auth types allowed in settings.
             return Response(status=status.HTTP_404_NOT_FOUND)
-
+        try:
+            user = Peoples.objects.get(mobile=self.request.data.get('mobile'))
+        except Peoples.DoesNotExist:
+            user = None
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             # Validate -
-            user = serializer.validated_data['user']
+            if user is None:
+                Peoples.objects.get(mobile=self.request.data.get('mobile')).delete()
             # Create and send callback token
-            success = TokenService.send_token(user, self.alias_type, **self.message_payload)
+            success = False
+            if user is not None:
+                success = TokenService.send_token(user, self.alias_type, **self.message_payload)
 
             # Respond With Success Or Failure of Sent
             if success:

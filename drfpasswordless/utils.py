@@ -1,7 +1,6 @@
 import logging
 import os
 from json import loads, dumps
-
 from constance import config
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
@@ -9,7 +8,6 @@ from django.core.mail import send_mail
 from django.template import loader
 from django.utils import timezone
 from requests import post
-
 from civil import settings
 from drfpasswordless.models import CallbackToken
 from drfpasswordless.settings import api_settings
