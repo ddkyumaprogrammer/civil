@@ -1,5 +1,9 @@
+import csv
+
 from django.contrib import admin
 # from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+from django.http import HttpResponse
+
 from django_jalali.admin import JDateFieldListFilter
 from mptt.admin import MPTTModelAdmin
 from .models import *
@@ -10,6 +14,26 @@ admin.empty_value_display = '(None)'
 _list_per_page = 20
 admin.site.register(Audiences)
 admin.site.register(Ranks,MPTTModelAdmin)
+
+
+
+class ExportCsvMixin:
+    def export_as_csv(self, request, queryset):
+
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+        writer = csv.writer(response)
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            row = writer.writerow([getattr(obj, field) for field in field_names])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected"
 
 
 
@@ -52,7 +76,7 @@ class PlacesInLine(admin.TabularInline):
     can_delete = True
 
 @admin.register(Peoples)
-class Peoplesadmin(admin.ModelAdmin):
+class Peoplesadmin(admin.ModelAdmin,ExportCsvMixin):
     list_display = ('first_name','last_name','mobile','is_legal')
     fieldsets =(
                 (None,{
@@ -72,6 +96,7 @@ class Peoplesadmin(admin.ModelAdmin):
     inlines = [
         PlacesInLine
     ]
+    actions = ['export_as_csv']
     def _sessions(self, obj):
         return obj.sessions_set.all().count()
     _sessions.short_description = 'مکان ها'
