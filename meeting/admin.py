@@ -3,13 +3,27 @@ from django.contrib import admin
 from django_jalali.admin import JDateFieldListFilter
 from mptt.admin import MPTTModelAdmin
 from .models import *
+from django.contrib.admin import AdminSite
 
 
-
-admin.site.empty_value_display = '(None)'
-admin.ModelAdmin.list_per_page = 20
+admin.empty_value_display = '(None)'
+_list_per_page = 20
 admin.site.register(Audiences)
 admin.site.register(Ranks,MPTTModelAdmin)
+
+
+
+class CivilAdminSite(AdminSite):
+    site_header = "Civil Admin"
+    site_title = "Civil Admin Portal"
+    index_title = "Welcome to Civil Portal"
+
+civil_admin_site = CivilAdminSite(name='civil_admin')
+
+civil_admin_site.empty_value_display = '(None)'
+civil_admin_site.register(Audiences)
+civil_admin_site.register(Ranks,MPTTModelAdmin)
+
 
 
 @admin.register(Places)
@@ -26,6 +40,10 @@ class Placesadmin(admin.ModelAdmin):
                 )
     search_fields = ['place_owner',]
     # list_filter = ('place_title',)
+
+civil_admin_site.register(Places,Placesadmin)
+
+
 
 
 class PlacesInLine(admin.TabularInline):
@@ -58,6 +76,7 @@ class Peoplesadmin(admin.ModelAdmin):
         return obj.sessions_set.all().count()
     _sessions.short_description = 'مکان ها'
 
+civil_admin_site.register(Peoples,Peoplesadmin)
 
 
 
@@ -87,6 +106,7 @@ class Sessionsadmin(admin.ModelAdmin):
         return obj.sessions_set.all().count()
     _sessions.short_description = 'تعداد افراد'
 
+civil_admin_site.register(Sessions,Sessionsadmin)
 
 
 
