@@ -145,17 +145,23 @@ def get_childern_view_by_token(request):
     child = []
     _parent_id = []
     try:
-        _parent_id.append(Ranks.objects.get(rank_owner_id=request.user.id).id)
-    except Ranks.DoesNotExist:
+        if request.data.get('rank_name'):
+            _ranks =Ranks.objects._mptt_filter(rank_owner=request.user,rank_name = request.data.get('rank_name') )
+        else:
+            _ranks =Ranks.objects._mptt_filter(rank_owner=request.user)
 
+        for _rank in _ranks:
+            _parent_id.append(_rank.id)
+    except _rank.DoesNotExist:
         _parent_id = []
+
     for pid in _parent_id:
-            for _rank in ranks:
-                if _rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
-                    if pid == _rank.parent_id:
-                        if _rank.rank_owner_id is not None:
-                            child.append(_rank.rank_owner_id)
-                        _parent_id.append(_rank.id)
+            for rank in ranks:
+                if rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
+                    if pid == rank.parent_id:
+                        if rank.rank_owner_id is not None:
+                            child.append(rank.rank_owner_id)
+                        _parent_id.append(rank.id)
 
 
 
