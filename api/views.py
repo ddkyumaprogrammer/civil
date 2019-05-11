@@ -54,8 +54,14 @@ class SessionsViewSet(viewsets.ModelViewSet):
             if 'audiences' in request.data:
                 audiences = request.data.get('audiences')
                 for audience in audiences:
-                    ppl = Peoples.objects.get(mobile = audience.get('people')).id
-                    rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
+                    try:
+                        ppl = Peoples.objects.get(mobile = audience.get('people')).id
+                    except :
+                        ppl = None
+                    try:
+                        rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
+                    except :
+                        rppl = None
                     sessn = Sessions.objects.get(id = obj.id).id
                     Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
 
