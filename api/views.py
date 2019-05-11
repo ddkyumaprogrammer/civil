@@ -1,4 +1,7 @@
 import datetime
+import json
+
+import jdatetime
 from django.shortcuts import redirect, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -113,7 +116,9 @@ class PeopleViewSet(viewsets.ModelViewSet):
             obj.save()
         for place in places:
             Places.objects.create(place_owner=obj,**place)
-        return JsonResponse([obj.first_name,obj.last_name,obj.is_legal], safe=False)
+        leads_as_json = serializers.serialize('json', [obj, ])
+        return HttpResponse(leads_as_json, content_type='json')
+        # return JsonResponse([obj.first_name,obj.last_name,obj.is_legal], safe=False)
         # return JsonResponse ({'status':'ok',},encoder=JSONEncoder)
 
 
@@ -152,26 +157,42 @@ def get_childern_view_by_token(request):
                             child.append(_rank.rank_owner_id)
                         _parent_id.append(_rank.id)
 
+
+
     return JsonResponse(child, safe=False)
 
 
 
 
-class PlaceViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    queryset = Places.objects.all()
-    serializer_class = PlaceSerializer
+# class PlaceViewSet(viewsets.ModelViewSet):
+#     permission_classes = (IsAuthenticated,)
+#     queryset = Places.objects.all()
+#     serializer_class = PlaceSerializer
+#
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         queryset = queryset.filter(place_owner=self.request.user)
+#         page = self.paginate_queryset(queryset)
+#         if page is not None:
+#             serializer = PlaceSerializer(page, many=True)
+#             return self.get_paginated_response(serializer.data)
+#
+#         serializer = PlaceSerializer(queryset, many=True)
+#         return Response(serializer.data)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(place_owner=self.request.user)
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = PlaceSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
 
-        serializer = PlaceSerializer(queryset, many=True)
-        return Response(serializer.data)
+@api_view(['POST'])
+def get_place_by_owner(request):
+
+    obj = []
+    places = Places.objects.filter(place_owner= request.user)
+    for place in places:
+        obj.append(place)
+    leads_as_json = serializers.serialize('json',  obj)
+    return HttpResponse(leads_as_json, content_type='json')
+
+
+
 
 
 
@@ -192,8 +213,11 @@ class RepViewSet(viewsets.ModelViewSet):
         obj.rep_ppl = rep_ppl_id
 
         obj.save()
+        leads_as_json = serializers.serialize('json', [obj, ])
+        return HttpResponse(leads_as_json, content_type='json')
 
-        return JsonResponse(model_to_dict(obj), safe=False)
+
+        # return JsonResponse(model_to_dict(obj), safe=False)
 
 
 
@@ -229,20 +253,37 @@ def  get_sessions_by_owner(request):
 
 
 
-class SessionidViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    queryset = Sessions.objects.all()
-    serializer_class = SessionsSerializer
+# class SessionidViewSet(viewsets.ModelViewSet):
+#     permission_classes = (IsAuthenticated,)
+#     queryset = Sessions.objects.all()
+#     serializer_class = SessionsSerializer
+#
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         queryset = queryset.filter(meeting_owner=self.request.user)
+#         queryset = queryset.filter(id=self.request.data.get('id'))
+#         page = self.paginate_queryset(queryset)
+#         if page is not None:
+#             serializer = SessionsSerializer(page, many=True)
+#             return self.get_paginated_response(serializer.data)
+#
+#         serializer = SessionsSerializer(queryset, many=True)
+#         return Response(serializer.data)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(meeting_owner=self.request.user)
-        queryset = queryset.filter(id=self.request.data.get('id'))
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = SessionsSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+from django.core import serializers
+@api_view(['POST'])
+def get_session_by_id(request):
+    obj = Sessions.objects.get(id = request.data.get('id'))
 
-        serializer = SessionsSerializer(queryset, many=True)
-        return Response(serializer.data)
+    # obj = model_to_dict(obj)
+    # print(obj)
+    # def myconverter(o):
+    #     if isinstance(o,jdatetime.datetime):
+    #         return o.__str__()
+    # result = json.dumps(obj,default=myconverter )
+    # return Response(result.encode('utf-8'))
+
+
+    leads_as_json = serializers.serialize('json',  [ obj, ])
+    return HttpResponse(leads_as_json, content_type='json')
 
