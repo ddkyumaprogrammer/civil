@@ -141,20 +141,23 @@ def refresh_sms_token_view(request):
 
 @api_view(['POST'])
 def get_childern_view_by_token(request):
-    ranks = Ranks.objects.all()
+    try:
+        ranks = Ranks.objects.all()
+    except:
+        return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
     child = []
     _parent_id = []
     try:
         if request.data.get('rank_name'):
-            _ranks =Ranks.objects._mptt_filter(rank_owner=request.user,rank_name = request.data.get('rank_name') )
+            _ranks =Ranks.objects.filter(rank_owner=request.user,rank_name = request.data.get('rank_name') )
         else:
-            _ranks =Ranks.objects._mptt_filter(rank_owner=request.user)
+            _ranks =Ranks.objects.filter(rank_owner=request.user)
 
         for _rank in _ranks:
             _parent_id.append(_rank.id)
-    except _ranks.id.DoesNotExist:
-        return HttpResponse(status=500)
-    if _ranks == []:
+    except:
+        return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
+    if _parent_id == []:
         return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
 
     else:
@@ -168,7 +171,11 @@ def get_childern_view_by_token(request):
                                     pass
                                 else:
                                     child.append(rank.rank_owner_id)
-                            _parent_id.append(rank.id)
+                            p = rank.id
+                            if p in _parent_id:
+                                pass
+                            else:
+                                _parent_id.append(rank.id)
         if child == []:
             return HttpResponse('شما زیردستی ندارید.', status=500)
         else:
