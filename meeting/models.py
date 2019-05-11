@@ -53,7 +53,7 @@ class Ranks(MPTTModel):
     rank_name = models.CharField(null=True,max_length=50, verbose_name='نام جایگاه')
     rank_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='صاحب جایگاه',related_name='rank_owner',
                                   on_delete=models.CASCADE)
-    parent = TreeForeignKey('self',  null=True, blank=True,verbose_name='بالا دستی',related_name='childern',
+    parent = TreeForeignKey('self',  null=True, blank=True,verbose_name='جایگاه بالا دستی',related_name='childern',
                             db_index=True,on_delete=models.CASCADE)
 
 

@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 
 from django_jalali.admin import JDateFieldListFilter
-from mptt.admin import MPTTModelAdmin
+from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
 from .models import *
 from django.contrib.admin import AdminSite
 
@@ -13,8 +13,34 @@ from django.contrib.admin import AdminSite
 admin.empty_value_display = '(None)'
 _list_per_page = 20
 admin.site.register(Audiences)
-admin.site.register(Ranks,MPTTModelAdmin)
 
+
+# admin.site.register(Ranks,MPTTModelAdmin)
+class MyDraggableMPTTAdmin(DraggableMPTTAdmin):
+    def something(self, instance):
+        return format_html(
+            '<div style="text-indent:{}px">{}</div>',
+            instance._mpttfield('level') * self.mptt_level_indent,
+            'rank_name',  # Or whatever you want to put here
+        )
+    something.short_description = ('something nice')
+
+admin.site.register(Ranks,
+    DraggableMPTTAdmin,
+    list_display=(
+        'tree_actions',
+        'indented_title',
+        # 'rank_name',
+        'rank_owner',
+        'parent',
+
+        # ...more fields if you feel like it...
+    ),
+    list_display_links=(
+        'indented_title',
+    ),
+)
+# MPTT_ADMIN_LEVEL_INDENT = 20
 
 
 class ExportCsvMixin:
