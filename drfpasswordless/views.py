@@ -47,15 +47,14 @@ class AbstractBaseObtainCallbackToken(APIView):
             user = Peoples.objects.get(mobile=self.request.data.get('mobile'))
         except Peoples.DoesNotExist:
             user = None
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        if serializer.is_valid(raise_exception=True):
-            # Validate -
-            if user is None:
-                Peoples.objects.get(mobile=self.request.data.get('mobile')).delete()
-            # Create and send callback token
-            success = False
-            if user is not None:
-                success = TokenService.send_token(user, self.alias_type, **self.message_payload)
+        # serializer = self.serializer_class(data=request.data, context={'request': request})
+        # if serializer.is_valid(raise_exception=True):
+        #     # Validate -
+        #     if user is None:
+        #         Peoples.objects.get(mobile=self.request.data.get('mobile')).delete()
+        # Create and send callback token
+        if user is not None:
+            success = TokenService.send_token(user, self.alias_type, **self.message_payload)
 
             # Respond With Success Or Failure of Sent
             if success:
@@ -66,7 +65,7 @@ class AbstractBaseObtainCallbackToken(APIView):
                 response_detail = self.failure_response
             return Response({'detail': response_detail}, status=status_code)
         else:
-            return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+            return Response('شما در سیستم ثبت نشده اید.', status=status.HTTP_400_BAD_REQUEST)
 
 
 class ObtainEmailCallbackToken(AbstractBaseObtainCallbackToken):
