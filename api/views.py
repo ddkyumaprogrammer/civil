@@ -152,21 +152,27 @@ def get_childern_view_by_token(request):
 
         for _rank in _ranks:
             _parent_id.append(_rank.id)
-    except _rank.DoesNotExist:
-        _parent_id = []
+    except _ranks.id.DoesNotExist:
+        return HttpResponse(status=500)
+    if _ranks == []:
+        return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
 
-    for pid in _parent_id:
-            for rank in ranks:
-                if rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
-                    if pid == rank.parent_id:
-                        if rank.rank_owner_id is not None:
-                            child.append(rank.rank_owner_id)
-                        _parent_id.append(rank.id)
-
-
-
-    return JsonResponse(child, safe=False)
-
+    else:
+        for pid in _parent_id:
+                for rank in ranks:
+                    if rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
+                        if pid == rank.parent_id:
+                            if rank.rank_owner_id is not None:
+                                c = rank.rank_owner_id
+                                if c in child:
+                                    pass
+                                else:
+                                    child.append(rank.rank_owner_id)
+                            _parent_id.append(rank.id)
+        if child == []:
+            return HttpResponse('شما زیردستی ندارید.', status=500)
+        else:
+            return JsonResponse(child, safe=False)
 
 
 
