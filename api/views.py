@@ -183,11 +183,12 @@ class RepViewSet(viewsets.ModelViewSet):
     serializer_class = AudienceSerializer
 
     def create(self, request, *args, **kwargs):
+
         ppl_id = request.user.id
         session_id = request.data.get('session_id' )
 
         obj = Audiences.objects.get(people =ppl_id,session = session_id)
-        rep_ppl_id = Peoples.objects.get(username = request.data.get('rep_ppl'))
+        rep_ppl_id = Peoples.objects.get(id = request.data.get('rep_ppl'))
         obj.rep_ppl = rep_ppl_id
 
         obj.save()
