@@ -160,22 +160,25 @@ def get_childern_view_by_token(request):
     if _parent_id == []:
         return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
 
+
+
     else:
-        for pid in _parent_id:
-                for rank in ranks:
-                    if rank.tree_id == Ranks.objects.get(pk=request.user.id).tree_id:
-                        if pid == rank.parent_id:
-                            if rank.rank_owner_id is not None:
-                                c = rank.rank_owner_id
-                                if c in child:
+        for _rank in _ranks:
+            for pid in _parent_id:
+                    for rank in ranks:
+                        if rank.tree_id == _rank.tree_id:
+                            if pid == rank.parent_id:
+                                if rank.rank_owner_id is not None:
+                                    c = rank.rank_owner_id
+                                    if c in child:
+                                        pass
+                                    else:
+                                        child.append(rank.rank_owner_id)
+                                p = rank.id
+                                if p in _parent_id:
                                     pass
                                 else:
-                                    child.append(rank.rank_owner_id)
-                            p = rank.id
-                            if p in _parent_id:
-                                pass
-                            else:
-                                _parent_id.append(rank.id)
+                                    _parent_id.append(rank.id)
         if child == []:
             return HttpResponse('شما زیردستی ندارید.', status=500)
         else:
