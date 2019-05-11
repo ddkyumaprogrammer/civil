@@ -20,8 +20,7 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
 
-        serializer = SessionsSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         _sessions = Sessions.objects.all()
         # obj = serializer.save()
         intrposition = []
@@ -48,25 +47,27 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
 
         else:
-            obj = serializer.save()
-            obj.meeting_owner = request.user
-            obj.save()
-            if 'audiences' in request.data:
-                audiences = request.data.get('audiences')
-                for audience in audiences:
-                    try:
-                        ppl = Peoples.objects.get(mobile = audience.get('people')).id
-                    except :
-                        ppl = None
-                    try:
-                        rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
-                    except :
-                        rppl = None
-                    sessn = Sessions.objects.get(id = obj.id).id
-                    Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
+            if serializer.is_valid(raise_exception=True):
+                obj = serializer.save(meeting_owner = request.user)
+                # obj = Sessions.objects.get(meeting_title=request.data.get('title'))
+                # obj.meeting_owner = request.user
+                # obj.save()
+                if 'audiences' in request.data:
+                    audiences = request.data.get('audiences')
+                    for audience in audiences:
+                        try:
+                            ppl = Peoples.objects.get(mobile = audience.get('people')).id
+                        except :
+                            ppl = None
+                        try:
+                            rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
+                        except :
+                            rppl = None
+                        sessn = Sessions.objects.get(id = obj.id).id
+                        Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
 
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 
