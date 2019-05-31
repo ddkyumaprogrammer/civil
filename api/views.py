@@ -173,7 +173,7 @@ def get_childern_view_by_token(request):
                                     if c in child:
                                         pass
                                     else:
-                                        child.append(rank.rank_owner_id)
+                                        child.append(rank.rank_owner)
                                 p = rank.id
                                 if p in _parent_id:
                                     pass
@@ -182,7 +182,8 @@ def get_childern_view_by_token(request):
         if child == []:
             return HttpResponse('شما زیردستی ندارید.', status=500)
         else:
-            return JsonResponse(child, safe=False)
+            leads_as_json = serializers.serialize('json', child)
+            return HttpResponse(leads_as_json, content_type='json')
 
 
 
