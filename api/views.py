@@ -302,17 +302,20 @@ def  get_sessions_by_owner(request):
 from django.core import serializers
 @api_view(['POST'])
 def get_session_by_id(request):
-    obj = Sessions.objects.get(id = request.data.get('id'))
-
-    # obj = model_to_dict(obj)
-    # print(obj)
-    # def myconverter(o):
-    #     if isinstance(o,jdatetime.datetime):
-    #         return o.__str__()
-    # result = json.dumps(obj,default=myconverter )
-    # return Response(result.encode('utf-8'))
-
-
-    leads_as_json = serializers.serialize('json',  [ obj, ])
-    return HttpResponse(leads_as_json, content_type='json')
+    r = {}
+    session = []
+    _audiences = Audiences.objects.filter(session_id = request.data.get('id'))
+    for _audience in _audiences:
+        rr = []
+        rr.append(_audience.people.first_name)
+        rr.append(_audience.people.last_name)
+        rr.append(_audience.people.mobile)
+        rr.append(_audience.people.is_legal)
+        r[_audience.people.id] = rr
+    _session = Sessions.objects.get(id = request.data.get('id'))
+    session.append({'id': _session.id, 'meeting_title': str(_session.meeting_title),
+                    'meeting_owner': str(_session.meeting_owner.first_name) + '-' +
+                    str(_session.meeting_owner.last_name),'start_time': str(_session.start_time),
+                     'end_time': str(_session.end_time),'people': str(r)})
+    return JsonResponse(session, safe=False)
 
