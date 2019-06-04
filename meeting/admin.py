@@ -12,7 +12,6 @@ from django.contrib.admin import AdminSite
 
 admin.empty_value_display = '(None)'
 _list_per_page = 20
-admin.site.register(Audiences)
 
 
 # admin.site.register(Ranks,MPTTModelAdmin)
@@ -63,17 +62,20 @@ class ExportCsvMixin:
 
 
 
-class CivilAdminSite(AdminSite):
-    site_header = "Civil Admin"
-    site_title = "Civil Admin Portal"
-    index_title = "Welcome to Civil Portal"
 
-civil_admin_site = CivilAdminSite(name='civil_admin')
 
-civil_admin_site.empty_value_display = '(None)'
-civil_admin_site.register(Audiences)
-civil_admin_site.register(Ranks,MPTTModelAdmin)
 
+@admin.register(Audiences)
+class Audiencesadmin(admin.ModelAdmin):
+    list_display = ('_stime','session','people','rep_ppl',)
+    fields =('session','people','rep_ppl',)
+    search_fields = ['session__title','people__last_name','rep_ppl__last_name',]
+
+
+    def _stime(self, obj):
+        return obj.session.start_time
+
+    _stime.short_description = 'تعداد افراد'
 
 
 @admin.register(Places)
@@ -88,10 +90,10 @@ class Placesadmin(admin.ModelAdmin):
                     'fields': ('place_address',),
                 }),
                 )
-    search_fields = ['place_owner',]
+    search_fields = ['place_owner__last_name',]
     # list_filter = ('place_title',)
 
-civil_admin_site.register(Places,Placesadmin)
+
 
 
 
@@ -106,7 +108,7 @@ class Peoplesadmin(admin.ModelAdmin,ExportCsvMixin):
     list_display = ('first_name','last_name','mobile','is_legal')
     fieldsets =(
                 (None,{
-                     'fields':(('first_name','last_name'),('mobile','is_legal'))
+                     'fields':(('first_name','last_name'),('mobile','is_legal'),'image','personly_image')
                 }),
                 ('Advanced options', {
                                 'classes': ('collapse',),
@@ -127,15 +129,15 @@ class Peoplesadmin(admin.ModelAdmin,ExportCsvMixin):
         return obj.sessions_set.all().count()
     _sessions.short_description = 'مکان ها'
 
-civil_admin_site.register(Peoples,Peoplesadmin)
 
 
 
 class AudiencesInLine(admin.TabularInline):
     model = Audiences
     extra = 1
+    can_delete = True
 @admin.register(Sessions)
-class Sessionsadmin(admin.ModelAdmin):
+class Sessionsadmin(admin.ModelAdmin,ExportCsvMixin):
     list_display = ('meeting_title','start_time','end_time','meeting_owner','place',)
     fieldsets =(
                 (None,{
@@ -147,17 +149,22 @@ class Sessionsadmin(admin.ModelAdmin):
     search_fields = ['meeting_title','start_time','meeting_owner__last_name',]
     list_filter = (('start_time',JDateFieldListFilter),)
     # list_filter = (('start_time',DateRangeFilter),)
+    date_hierarchy = 'start_time'
 
-    exclude = ('se_num',)
+
+    # exclude = ('meeting_title',)
+
     inlines = [
         AudiencesInLine
     ]
 
     def _sessions(self, obj):
         return obj.sessions_set.all().count()
+
+
     _sessions.short_description = 'تعداد افراد'
 
-civil_admin_site.register(Sessions,Sessionsadmin)
+
 
 
 

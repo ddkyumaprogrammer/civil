@@ -19,13 +19,11 @@ from api.views import *
 from civil import settings
 
 
-from meeting.admin import civil_admin_site
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('civil-admin/', civil_admin_site.urls),
     path(r'api/', include('api.urls')),
     path(r'', include('drfpasswordless.urls')),
     path(r'celery-sandbox/', include('celery_sandbox.urls'))
