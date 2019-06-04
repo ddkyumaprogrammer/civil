@@ -145,7 +145,7 @@ def get_childern_view_by_token(request):
         ranks = Ranks.objects.all()
     except Ranks.DoesNotExist:
         return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
-    child = []
+    childern = {}
     _parent_id = []
     try:
         if request.data.get('rank_name'):
@@ -159,32 +159,42 @@ def get_childern_view_by_token(request):
 
     if _parent_id == []:
         return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
-
-
-
     else:
         for _rank in _ranks:
-            for pid in _parent_id:
-                    for rank in ranks:
-                        if rank.tree_id == _rank.tree_id:
-                            if pid == rank.parent_id:
-                                if rank.rank_owner_id is not None:
-                                    c = rank.rank_owner_id
-                                    if c in child:
-                                        pass
-                                    else:
-                                        child.append(rank.rank_owner)
-                                p = rank.id
-                                if p in _parent_id:
+            childs = {}
+            pids = []
+            pids.append(_rank.id)
+            for pid in pids:
+                for rank in ranks:
+                    if rank.tree_id == _rank.tree_id:
+                        if pid == rank.parent_id:
+                            if rank.rank_owner_id is not None:
+                                c = rank.rank_owner_id
+                                if c in childs.keys():
                                     pass
                                 else:
-                                    _parent_id.append(rank.id)
-        if child == []:
+                                    child = []
+                                    child.append(rank.rank_owner.first_name)
+                                    child.append(rank.rank_owner.last_name)
+                                    child.append(rank.rank_owner.mobile)
+                                    child.append(rank.rank_owner.is_legal)
+                                    childs[rank.rank_owner.pk]=child
+                            p = rank.id
+                            if p in pids:
+                                pass
+                            else:
+                                pids.append(rank.id)
+            childern[_rank.rank_name] = childs
+        t = 0
+        for i in childern.values():
+            if i:
+                t += 1
+            else:
+                t += 0
+        if t == 0:
             return HttpResponse('شما زیردستی ندارید.', status=500)
         else:
-            leads_as_json = serializers.serialize('json', child)
-            return HttpResponse(leads_as_json, content_type='json')
-
+            return JsonResponse(childern, safe=False)
 
 
 # class PlaceViewSet(viewsets.ModelViewSet):
@@ -252,7 +262,7 @@ def  get_sessions_by_owner(request):
     sdate = datetime.datetime.strptime(request.data.get('time'), "%Y-%m-%d")
     s_sessions = []
 
-    _sessions = Sessions.objects.all()
+    _sessions = Sessions.objects.filter(meeting_owner=request.user)
     for _session in _sessions:
         stime = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
         if stime.year == sdate.year:
@@ -260,7 +270,7 @@ def  get_sessions_by_owner(request):
                 if stime.day == sdate.day:
                     s_sessions.append({'id':_session.id , 'meeting_title' : _session.meeting_title,
                     'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
-                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time)})
+                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time), 'people' : ""})
 
     _audiences = Audiences.objects.all()
     for _audience in _audiences:
@@ -270,7 +280,7 @@ def  get_sessions_by_owner(request):
                 if sstime.day == sdate.day:
                     s_sessions.append({'id':_audience.session.id , 'title' : _audience.session.meeting_title,
                     'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
-                                       'start_time': str(_audience.session.start_time) , 'end_time' : str(_audience.session.end_time)})
+                                       'start_time': str(_audience.session.start_time) , 'people' : str(_audience.people.first_name)+str(_audience.people.last_name)})
 
     return JsonResponse(s_sessions, safe=False)
 
