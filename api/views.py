@@ -256,26 +256,27 @@ def  get_sessions_by_owner(request):
     # sdate = jalali.Persian(request.data.get('s_time')).gregorian_datetime()
     sdate = datetime.datetime.strptime(request.data.get('time'), "%Y-%m-%d")
     s_sessions = []
-
+    myformat = '%Y-%m-%d %H:%M:%S'
     _sessions = Sessions.objects.filter(meeting_owner=request.user)
     for _session in _sessions:
-        stime = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
+        stime = datetime.datetime.strptime(str(_session.start_time), myformat).date()
         if stime.year == sdate.year:
             if stime.month == sdate.month:
                 if stime.day == sdate.day:
-                    s_sessions.append({'id':_session.id , 'meeting_title' : _session.meeting_title,
+                    s_sessions.append({"as owner":{'id':_session.id , 'meeting_title' : _session.meeting_title,
                     'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
-                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time), 'people' : ""})
+                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time), 'people' : ""}})
 
     _audiences = Audiences.objects.all()
     for _audience in _audiences:
-        sstime = datetime.datetime.strptime(str(_audience.session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
+        sstime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if sstime.year == sdate.year:
             if sstime.month == sdate.month:
                 if sstime.day == sdate.day:
-                    s_sessions.append({'id':_audience.session.id , 'title' : _audience.session.meeting_title,
+                    s_sessions.append({"as audience":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
                     'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
-                                       'start_time': str(_audience.session.start_time) , 'people' : str(_audience.people.first_name)+str(_audience.people.last_name)})
+                                       'start_time': str(_audience.session.start_time) ,
+                                       'people' : str(_audience.people.first_name)+str(_audience.people.last_name)}})
 
     return JsonResponse(s_sessions, safe=False)
 
