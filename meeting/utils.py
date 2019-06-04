@@ -45,7 +45,7 @@ def send_ultrafast_sms(**kwargs):
 
 
 def get_image_path(instance, filename):
-    return os.path.join('img', str(instance.category), filename)
+    return os.path.join('img', str(instance), filename)
 
 
 
