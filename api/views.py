@@ -2,7 +2,7 @@ import datetime
 import json
 
 import jdatetime
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
@@ -318,4 +318,6 @@ def get_session_by_id(request):
                     str(_session.meeting_owner.last_name),'start_time': str(_session.start_time),
                      'end_time': str(_session.end_time),'people': str(r)})
     return JsonResponse(session, safe=False)
+
+
 
