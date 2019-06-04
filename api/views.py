@@ -27,25 +27,20 @@ class SessionsViewSet(viewsets.ModelViewSet):
         _sessions = Sessions.objects.all()
         # obj = serializer.save()
         intrposition = []
+        myformat = '%Y-%m-%d %H:%M:%S'
+        sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).date()
+        edate = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).date()
+        stime = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).time()
+        etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
+        force = self.request.data.get('force')
         for _session in _sessions:
-            sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), '%Y-%m-%d %H:%M:%S%z').date()
-            edate = datetime.datetime.strptime(str(self.request.data.get('end_time')), '%Y-%m-%d %H:%M:%S%z').date()
-            stime = datetime.datetime.strptime(str(self.request.data.get('start_time')), '%Y-%m-%d %H:%M:%S%z').time()
-            etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), '%Y-%m-%d %H:%M:%S%z').time()
-            _session_date = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').date()
-            _session_time = datetime.datetime.strptime(str(_session.start_time), '%Y-%m-%d %H:%M:%S%z').time()
-
-            if _session_date == sdate:
-                if stime <= _session_time <= etime:
-                    intrposition.append(_session.meeting_title)
-                    # gholi = Sessions.objects.filter(start_time__range =(sdate , edate))
-            if str(_session.end_time.date())== str(edate):
-                if stime <= _session.end_time.time() <= etime:
-                    intrposition.append(_session.meeting_title)
+            if str(_session.start_time.date())== str(sdate) or str(_session.end_time.date())== str(edate):
+                if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
+                    intrposition.append(_session)
                     # goli = Sessions.objects.filter(end_time__range =(sdate , edate))
 
 
-        if intrposition != []:
+        if intrposition != [] and force == 0:
             return Response( ', '.join(map(str, intrposition))+"--"+"تداخل با جلسه")
 
 
