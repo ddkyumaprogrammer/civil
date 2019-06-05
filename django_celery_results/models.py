@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from celery import states
-from celery.five import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible
 
 from . import managers
 
