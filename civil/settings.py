@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'drfpasswordless',
+    'drfpasswordless.tasks',
     'bootstrap4',
     'debug_toolbar',
     'celery',
