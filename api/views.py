@@ -1,6 +1,8 @@
 import datetime
 import json
 
+import drfpasswordless.tasks
+
 import jdatetime
 from django.shortcuts import redirect, get_object_or_404, render
 from rest_framework.decorators import api_view
@@ -8,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
-from drfpasswordless.tasks import refresh_sms_token
+# from drfpasswordless.tasks import refresh_sms_token
 from .serializers import *
 # from api.tasks import refresh_sms_token
 from django.forms.models import model_to_dict
@@ -123,7 +125,7 @@ def refresh_sms_token_view(request):
 
     try:
         # eager = refresh_sms_token.apply()
-        ea = refresh_sms_token()
+        ea = drfpasswordless.tasks.refresh_sms_token()
     except Exception as e:
         return HttpResponse(status=500)
 
