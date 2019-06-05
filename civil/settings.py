@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import locale
 import os
 from celery.schedules import crontab
-from drfpasswordless.tasks import refresh_sms_token
 
 
 
