@@ -252,12 +252,12 @@ CELERY_TIMEZONE = 'Asia/Tehran'
 
 CELERY_BEAT_SCHEDULE = {
     'refresh-sms-token-every-30-minutes': {
-        'task': 'drfpasswordless.tasks.refresh_sms_token',
+        'task': 'api.tasks.refresh_sms_token',
         'schedule': crontab(minute ='*/15')  # refresh every 20 minutes
     },
 
 }
-CELERY_IMPORTS = ['drfpasswordless']
+CELERY_IMPORTS = ['api']
 
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
