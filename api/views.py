@@ -122,7 +122,7 @@ def refresh_sms_token_view(request):
 
     try:
         # eager = refresh_sms_token.apply()
-        refresh_sms_token()
+        ee = refresh_sms_token()
         # return redirect('Http://127.0.0.1:8000/admin/constance/config/')
         return redirect('Http://185.211.57.73/admin/constance/config/' )
     except Exception as e:

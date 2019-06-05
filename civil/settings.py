@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'meeting',
     'mptt',
     'api',
+    'flower',
     # 'rangefilter',
 
 )
@@ -219,7 +220,7 @@ CONSTANCE_REDIS_CONNECTION = {
 
 
 
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1','185.211.57.73']
 
 # REDIS related settings
 REDIS_HOST = 'localhost'
