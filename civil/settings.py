@@ -242,8 +242,10 @@ CACHES = {
 # celery -A civil worker -l debug
 # Celery settings
 
-CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+# CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+# CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
@@ -251,12 +253,12 @@ CELERY_TIMEZONE = 'Asia/Tehran'
 
 CELERY_BEAT_SCHEDULE = {
     'refresh-sms-token-every-30-minutes': {
-        'task': 'api.tasks.refresh_sms_token',
+        'task': 'drfpasswordless.tasks.refresh_sms_token',
         'schedule': crontab(minute ='*/15')  # refresh every 20 minutes
     },
 
 }
-CELERY_IMPORTS = ['api']
+CELERY_IMPORTS = ['drfpasswordless']
 
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
