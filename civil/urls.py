@@ -26,6 +26,7 @@ urlpatterns = [
     path(r'', include('drfpasswordless.urls')),
     path(r'celery-sandbox/', include('celery_sandbox.urls')),
     path('', HomePageView.as_view(), name='home'),
+    path(r'refresh-sms-token/', refresh_sms_token_view),
 
 ]
 

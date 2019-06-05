@@ -19,7 +19,6 @@ router.register(r'replaces', RepViewSet)
 
 
 urlpatterns = [
-    url(r'refresh-sms-token/', refresh_sms_token_view),
     url(r'get-childern-by-token/',get_childern_view_by_token),
     url(r'get-sessions-by-owner-for-day/', get_sessions_by_owner),
     url(r'session-by-id/', get_session_by_id),
