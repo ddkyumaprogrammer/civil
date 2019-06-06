@@ -1,8 +1,7 @@
-from django.shortcuts import render
-
 # Create your views here.
+from django.http.response import HttpResponse
 from django.shortcuts import render
-from celery_sandbox.tasks import very_expensive_computation
+from celery_sandbox.tasks import refresh_sms_token
 
 
 def my_request(request):
@@ -12,6 +11,9 @@ def my_request(request):
 
 def my_response(request):
 
-    very_expensive_computation.delay()
-
-    return render(request, 'celery_sandbox_response.html')
+    try:
+        # eager = refresh_sms_token.apply()
+        ee = refresh_sms_token()
+        return render(request, 'celery_sandbox_response.html')
+    except Exception as e:
+        return HttpResponse(status=500)
