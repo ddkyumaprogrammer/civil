@@ -311,19 +311,27 @@ class RepViewSet(viewsets.ModelViewSet):
         for _session in _sessions:
             if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
                 if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
-                    intrposition.append(_session)
-
+                    s = {}
+                    s[str(_session.meeting_owner.first_name) + ' ' + str(_session.meeting_owner.last_name)] = str(
+                        _session.meeting_title)
+                    intrposition.append(s)
         for _audience in _audiences:
-            if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(edate):
+            if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
+                    edate):
                 if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
-                    intrposition.append(_audience)
+                    a = {}
+                    a[str(_audience.people.first_name) + " " + str(_audience.people.last_name)] = str(
+                        _audience.session.meeting_title)
+                    intrposition.append(a)
 
 
         for rep_audience in rep_audiences:
             if str(rep_audience.session.start_time.date()) == str(sdate) or str(rep_audience.session.end_time.date()) == str(edate):
                 if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
-                    intrposition.append(rep_audience)
-
+                    r = {}
+                    r[str(_audience.rep_ppl.first_name)+" "+str(_audience.rep_ppl.last_name)] = str(
+                        _audience.session.meeting_title)
+                    intrposition.append(r)
 
 
         if intrposition != [] and force == 0:
@@ -367,24 +375,24 @@ def  get_sessions_by_date(request):
         stime = datetime.datetime.strptime(str(_session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
                     s_sessions.append({"as owner":{'id':_session.id , 'meeting_title' : _session.meeting_title,
-                    'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
+                    'meeting_owner':str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name),
                     'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time)}})
 
     for _audience in ppl_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
                     s_sessions.append({"as audience":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
-                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
+                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+' '+str(_audience.session.meeting_owner.last_name),
                                        'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
-                                       'people' : str(_audience.people.first_name)+str(_audience.people.last_name)}})
+                                       'people' : str(_audience.people.first_name)+" "+str(_audience.people.last_name)}})
 
     for _audience in rep_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
                     s_sessions.append({"as replace":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
-                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
+                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+' '+str(_audience.session.meeting_owner.last_name),
                                        'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
-                                       'people' : str(_audience.rep_ppl.first_name)+str(_audience.rep_ppl.last_name)}})
+                                       'people' : str(_audience.rep_ppl.first_name)+" "+str(_audience.rep_ppl.last_name)}})
     return JsonResponse(s_sessions, safe=False)
 
 
