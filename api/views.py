@@ -28,8 +28,12 @@ class SessionsViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         serializer = self.serializer_class(data=request.data, context={'request': request})
-        _sessions = Sessions.objects.all()
-        # obj = serializer.save()
+        try:
+            _sessions = Sessions.objects.all()
+        except Sessions.DoesNotExist:
+            _sessions = None
+
+
         intrposition = []
         myformat = '%Y-%m-%d %H:%M:%S'
         sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).date()
@@ -37,11 +41,11 @@ class SessionsViewSet(viewsets.ModelViewSet):
         stime = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).time()
         etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
         force = self.request.data.get('force')
+
         for _session in _sessions:
             if str(_session.start_time.date())== str(sdate) or str(_session.end_time.date())== str(edate):
                 if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
                     intrposition.append(_session)
-                    # goli = Sessions.objects.filter(end_time__range =(sdate , edate))
 
 
         if intrposition != [] and force == 0:
@@ -59,13 +63,16 @@ class SessionsViewSet(viewsets.ModelViewSet):
                     for audience in audiences:
                         try:
                             ppl = Peoples.objects.get(mobile = audience.get('people')).id
-                        except :
+                        except Peoples.DoesNotExist:
                             ppl = None
                         try:
                             rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
-                        except :
+                        except Peoples.DoesNotExist:
                             rppl = None
-                        sessn = Sessions.objects.get(id = obj.id).id
+                        try:
+                            sessn = Sessions.objects.get(id=obj.id).id
+                        except Sessions.DoesNotExist:
+                            sessn = None
                         Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
 
                 headers = self.get_success_headers(serializer.data)
@@ -93,10 +100,11 @@ class PeopleViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         _id = request.user.id
-        if _id:
-            obj=Peoples.objects.get(id=_id)
-        else:
-            obj=Peoples.objects.create(id=_id)
+        try:
+            obj = Peoples.objects.get(id=_id)
+        except Peoples.DoesNotExist:
+            obj = Peoples.objects.create(id=_id)
+
         for k,v in request.data.items():
             if k == 'first_name':
                 obj.first_name = v
@@ -144,7 +152,7 @@ def get_childern_view_by_token(request):
     try:
         ranks = Ranks.objects.all()
     except Ranks.DoesNotExist:
-        return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
+        return HttpResponse('جایگاهی تعریف نشده است.',status=500)
     childern = {}
     _parent_id = []
     try:
@@ -218,11 +226,16 @@ def get_childern_view_by_token(request):
 def get_place_by_owner(request):
 
     obj = []
-    places = Places.objects.filter(place_owner= request.user)
-    for place in places:
-        obj.append(place)
-    leads_as_json = serializers.serialize('json',  obj)
-    return HttpResponse(leads_as_json, content_type='json')
+    try:
+        places = Places.objects.filter(place_owner= request.user)
+        for place in places:
+            obj.append(place)
+        leads_as_json = serializers.serialize('json', obj)
+        return HttpResponse(leads_as_json, content_type='json')
+    except Places.DoesNotExist:
+        places = None
+        return HttpResponse("مکانی برای شما یافت نشد.")
+
 
 
 
@@ -308,7 +321,21 @@ def  get_sessions_by_date(request):
     sdate = datetime.datetime.strptime(request.data.get('time'), "%Y-%m-%d")
     s_sessions = []
     myformat = '%Y-%m-%d %H:%M:%S'
-    _sessions = Sessions.objects.filter(meeting_owner=request.user)
+    try:
+        _sessions = Sessions.objects.filter(meeting_owner=request.user)
+    except Sessions.DoesNotExist:
+        _sessions = None
+
+    try:
+        ppl_audiences = Audiences.objects.filter(people=request.user)
+    except Audiences.DoesNotExist:
+        _audiences = None
+
+    try:
+        rep_audiences = Audiences.objects.filter(rep_ppl=request.user)
+    except Audiences.DoesNotExist:
+        rep_audiences = None
+
     for _session in _sessions:
         stime = datetime.datetime.strptime(str(_session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
@@ -316,7 +343,6 @@ def  get_sessions_by_date(request):
                     'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
                     'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time)}})
 
-    ppl_audiences = Audiences.objects.filter(people = request.user)
     for _audience in ppl_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
@@ -325,7 +351,6 @@ def  get_sessions_by_date(request):
                                        'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
                                        'people' : str(_audience.people.first_name)+str(_audience.people.last_name)}})
 
-    rep_audiences = Audiences.objects.filter(rep_ppl = request.user)
     for _audience in rep_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
@@ -358,7 +383,10 @@ def  get_sessions_by_date(request):
 def get_session_by_id(request):
     r = {}
     session = []
-    _audiences = Audiences.objects.filter(session_id = request.data.get('id'))
+    try:
+        _audiences = Audiences.objects.filter(session_id = request.data.get('id'))
+    except Audiences.DoesNotExist:
+        _audiences = None
     i=1
     for _audience in _audiences:
         rr = {}
@@ -369,7 +397,10 @@ def get_session_by_id(request):
         rr["is_legal"] = _audience.people.is_legal
         r["No%s"%i] = rr
         i+=1
-    _session = Sessions.objects.get(id = request.data.get('id'))
+    try:
+        _session = Sessions.objects.get(id=request.data.get('id'))
+    except Sessions.DoesNotExist:
+        _session = None
     session.append({'id': _session.id, 'meeting_title': str(_session.meeting_title),
                     'meeting_owner': str(_session.meeting_owner.first_name) + '-' +
                     str(_session.meeting_owner.last_name),'start_time': str(_session.start_time),
