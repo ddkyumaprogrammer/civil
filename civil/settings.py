@@ -50,7 +50,7 @@ LOGGING = {
             'level': 'DEBUG',
             # 'class': 'logging.handlers.RotatingFileHandler',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'file-db.log.log/'),
+            'filename': os.path.join(BASE_DIR,'file-db.log/'),
             'formatter': 'verbose',
         },
         'file-app': {
@@ -62,13 +62,13 @@ LOGGING = {
         'file-django': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'file-django.log.log/'),
+            'filename': os.path.join(BASE_DIR,'file-django.log/'),
             'formatter': 'verbose',
         },
         'file-request': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'file-request.log.log/'),
+            'filename': os.path.join(BASE_DIR,'file-request.log/'),
             'formatter': 'verbose',
         },
         'console':{
@@ -86,7 +86,7 @@ LOGGING = {
         'django': {
             'handlers':['console','file-django'],
             'propagate': True,
-            'level':'ERROR',
+            'level':'DEBUG',
         },
         'django.db.backends': {
             'handlers': ['console','file-db'],
