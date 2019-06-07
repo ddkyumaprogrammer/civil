@@ -265,30 +265,24 @@ def  get_sessions_by_date(request):
     _sessions = Sessions.objects.filter(meeting_owner=request.user)
     for _session in _sessions:
         stime = datetime.datetime.strptime(str(_session.start_time), myformat).date()
-        if stime.year == sdate.year:
-            if stime.month == sdate.month:
-                if stime.day == sdate.day:
+        if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
                     s_sessions.append({"as owner":{'id':_session.id , 'meeting_title' : _session.meeting_title,
                     'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
-                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time), 'people' : ""}})
+                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time)}})
 
-    _audiences = Audiences.objects.filter(people = request.user)
-    for _audience in _audiences:
-        sstime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
-        if sstime.year == sdate.year:
-            if sstime.month == sdate.month:
-                if sstime.day == sdate.day:
+    ppl_audiences = Audiences.objects.filter(people = request.user)
+    for _audience in ppl_audiences:
+        stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
+        if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
                     s_sessions.append({"as audience":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
                     'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
                                        'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
                                        'people' : str(_audience.people.first_name)+str(_audience.people.last_name)}})
 
-    _audiences = Audiences.objects.filter(rep_ppl = request.user)
-    for _audience in _audiences:
-        sstime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
-        if sstime.year == sdate.year:
-            if sstime.month == sdate.month:
-                if sstime.day == sdate.day:
+    rep_audiences = Audiences.objects.filter(rep_ppl = request.user)
+    for _audience in rep_audiences:
+        stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
+        if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
                     s_sessions.append({"as replace":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
                     'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
                                        'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
