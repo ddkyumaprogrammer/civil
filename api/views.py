@@ -26,14 +26,8 @@ class SessionsViewSet(viewsets.ModelViewSet):
     serializer_class = SessionsSerializer
 
     def create(self, request, *args, **kwargs):
-
         serializer = self.serializer_class(data=request.data, context={'request': request})
-        try:
-            _sessions = Sessions.objects.all()
-        except Sessions.DoesNotExist:
-            _sessions = None
-
-
+        force = self.request.data.get('force')
         intrposition = []
         myformat = '%Y-%m-%d %H:%M:%S'
         sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).date()
@@ -42,10 +36,43 @@ class SessionsViewSet(viewsets.ModelViewSet):
         etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
         force = self.request.data.get('force')
 
-        for _session in _sessions:
-            if str(_session.start_time.date())== str(sdate) or str(_session.end_time.date())== str(edate):
-                if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
-                    intrposition.append(_session)
+        ppls = []
+        owner = {}
+        owner['people'] = request.user.mobile
+        ppls.append(owner)
+        if 'audiences' in request.data:
+            audiences = request.data.get('audiences')
+            ppl = ppls + audiences
+
+        for ppl in ppls:
+            try:
+                ppl_id = Peoples.objects.get(mobile=ppl.get('people')).id
+            except Peoples.DoesNotExist:
+                ppl = None
+
+            try:
+                _sessions = Sessions.objects.filter(meeting_owner_id=ppl_id)
+            except Sessions.DoesNotExist:
+                _sessions = None
+
+            try:
+                _audiences = Audiences.objects.filter(people_id=ppl_id)
+            except Audiences.DoesNotExist:
+                _audiences = None
+
+            for _session in _sessions:
+                if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
+                    if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
+                        s = {}
+                        s[str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name)] = str(_session.meeting_title)
+                        intrposition.append(s)
+            for _audience in _audiences:
+                if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
+                        edate):
+                    if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
+                        a = {}
+                        a[str(_audience.people.first_name)+" "+str(_audience.people.last_name)] = str(_audience.session.meeting_title)
+                        intrposition.append(a)
 
 
         if intrposition != [] and force == 0:
