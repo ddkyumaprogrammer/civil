@@ -309,13 +309,16 @@ def get_session_by_id(request):
     r = {}
     session = []
     _audiences = Audiences.objects.filter(session_id = request.data.get('id'))
+    i=1
     for _audience in _audiences:
-        rr = []
-        rr.append(_audience.people.first_name)
-        rr.append(_audience.people.last_name)
-        rr.append(_audience.people.mobile)
-        rr.append(_audience.people.is_legal)
-        r[_audience.people.id] = rr
+        rr = {}
+        rr["id"] = _audience.people.id
+        rr["first_name"] = _audience.people.first_name
+        rr["last_name"] = _audience.people.last_name
+        rr["mobile"] = _audience.people.mobile
+        rr["is_legal"] = _audience.people.is_legal
+        r["No%s"%i] = rr
+        i+=1
     _session = Sessions.objects.get(id = request.data.get('id'))
     session.append({'id': _session.id, 'meeting_title': str(_session.meeting_title),
                     'meeting_owner': str(_session.meeting_owner.first_name) + '-' +
