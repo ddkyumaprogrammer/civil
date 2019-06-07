@@ -257,7 +257,7 @@ class RepViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-def  get_sessions_by_owner(request):
+def  get_sessions_by_date(request):
     # sdate = jalali.Persian(request.data.get('s_time')).gregorian_datetime()
     sdate = datetime.datetime.strptime(request.data.get('time'), "%Y-%m-%d")
     s_sessions = []
@@ -280,7 +280,7 @@ def  get_sessions_by_owner(request):
                 if sstime.day == sdate.day:
                     s_sessions.append({"as audience":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
                     'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
-                                       'start_time': str(_audience.session.start_time) ,
+                                       'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
                                        'people' : str(_audience.people.first_name)+str(_audience.people.last_name)}})
 
     return JsonResponse(s_sessions, safe=False)
