@@ -277,11 +277,14 @@ class RepViewSet(viewsets.ModelViewSet):
     serializer_class = AudienceSerializer
 
     def create(self, request, *args, **kwargs):
-
-        ppl_id = request.user.id
-        session_id = request.data.get('session_id' )
-        rep_ppl_id = Peoples.objects.get(id = request.data.get('rep_ppl'))
-        force = self.request.data.get('force')
+        try:
+            ppl_id = request.user.id
+            session_id = request.data.get('session_id' )
+            rep_ppl_id = Peoples.objects.get(id = request.data.get('rep_ppl'))
+            force = self.request.data.get('force')
+        except:
+            rep_ppl_id = None
+            session_id = None
 
 
         intrposition = []
@@ -329,8 +332,8 @@ class RepViewSet(viewsets.ModelViewSet):
             if str(rep_audience.session.start_time.date()) == str(sdate) or str(rep_audience.session.end_time.date()) == str(edate):
                 if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
                     r = {}
-                    r[str(_audience.rep_ppl.first_name)+" "+str(_audience.rep_ppl.last_name)] = str(
-                        _audience.session.meeting_title)
+                    r[str(rep_audience.rep_ppl.first_name)+" "+str(rep_audience.rep_ppl.last_name)] = str(
+                        rep_audience.session.meeting_title)
                     intrposition.append(r)
 
 
