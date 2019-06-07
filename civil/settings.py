@@ -29,8 +29,91 @@ SECRET_KEY = 'e4(^948$d-9)r)c)ofo$v%$h^=fgxx50&(c91)tm))p2ik%#rr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'file-db': {
+            'level': 'DEBUG',
+            # 'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'file-db.log.log/'),
+            'formatter': 'verbose',
+        },
+        'file-app': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'file-app.log/'),
+            'formatter': 'verbose',
+        },
+        'file-django': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'file-django.log.log/'),
+            'formatter': 'verbose',
+        },
+        'file-request': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'file-request.log.log/'),
+            'formatter': 'verbose',
+        },
+        'console':{
+            'level':'INFO',
+            'filters': ['require_debug_true'],
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers':['console','file-django'],
+            'propagate': True,
+            'level':'ERROR',
+        },
+        'django.db.backends': {
+            'handlers': ['console','file-db'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers':
+            ['console', 'file-request','mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'api': {
+            'handlers': ['console', 'file-app','mail_admins'],
+            'level': 'DEBUG',
+            'propagate': False,
 
+        },
+        'celery_sandbox': {
+            'handlers': ['console', 'file-app', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': False,
 
+        },
+
+    }
+}
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','185.211.57.73','dna-h.ir']
 
@@ -157,8 +240,8 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR,'static/')
-STATICFILES_DIRS = (os.path.join('static'), )
+STATIC_ROOT = os.path.join(BASE_DIR,'static/')
+# STATICFILES_DIRS = (os.path.join('static'), )
 
 
 REST_FRAMEWORK = {
@@ -252,12 +335,12 @@ CELERY_TIMEZONE = 'Asia/Tehran'
 
 CELERY_BEAT_SCHEDULE = {
     'refresh-sms-token-every-30-minutes': {
-        'task': 'drfpasswordless.tasks.refresh_sms_token',
+        'task': 'celery_sandbox.tasks.refresh_sms_token',
         'schedule': crontab(minute ='*/15')  # refresh every 20 minutes
     },
 
 }
-CELERY_IMPORTS = ['drfpasswordless']
+CELERY_IMPORTS = ['celery_sandbox']
 
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'

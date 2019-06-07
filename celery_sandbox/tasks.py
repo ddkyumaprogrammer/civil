@@ -1,20 +1,16 @@
-from celery import shared_task
+import traceback
+
+from civil.celery import app
 from django.conf import settings
 from constance import config
 from json import loads, dumps
 from requests import post
-
-from civil.celery import app
 from jdatetime import datetime
-
+import logging
+logger = logging.getLogger(__name__)
 
 @app.task
 def refresh_sms_token():
-
-# for handler in logging.root.handlers[:]:
-#     logging.root.removeHandler(handler)
-# logging.basicConfig(filename='/opt/w/civil/error.log', level=logging.DEBUG)
-# logging.debug("---------------------------------------------------")
 
     token_headers = {"Content-Type": "application/json"}
     token_data = {"UserApiKey": settings.SMS_IR['USER_API_KEY'], "SecretKey": settings.SMS_IR['SECRET_KEY']}
@@ -29,5 +25,8 @@ def refresh_sms_token():
             print('token_key sms.ir error {}'.format(response['Message']))
             return False
     except Exception as e:
+        trace_back = traceback.format_exc()
+        message = str(e) + "\n" + str(trace_back)
+        logger.debug("ERROR:\n%s" % message)
         print('token_key sms.ir error {}'.format(e))
         return False

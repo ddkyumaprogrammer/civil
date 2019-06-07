@@ -1,5 +1,7 @@
 import datetime
 import json
+import traceback
+
 import jdatetime
 from django.shortcuts import redirect, get_object_or_404, render
 from rest_framework.decorators import api_view
@@ -7,12 +9,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
-from drfpasswordless.tasks import refresh_sms_token
+from celery_sandbox.tasks import refresh_sms_token
 from .serializers import *
 # from api.tasks import refresh_sms_token
 from django.forms.models import model_to_dict
 from meeting.models import *
+from django.core import serializers
 
+import logging
+logger = logging.getLogger(__name__)
 
 
 class SessionsViewSet(viewsets.ModelViewSet):
@@ -119,19 +124,18 @@ class PeopleViewSet(viewsets.ModelViewSet):
 def refresh_sms_token_view(request):
     if not request.user.is_staff:
         return HttpResponse(status=403)
+    else:
+        try:
+            # eager = refresh_sms_token.apply()
+            ee = refresh_sms_token()
+            # return redirect('Http://127.0.0.1:8000/admin/constance/config/')
+            return redirect('Http://185.211.57.73/admin/constance/config/' )
+        except Exception as e:
+            trace_back = traceback.format_exc()
+            message = str(e) + "\n" + str(trace_back)
+            logger.debug("ERROR:\n%s" % message)
+            return HttpResponse(status=500)
 
-    try:
-        # eager = refresh_sms_token.apply()
-        ee = refresh_sms_token()
-        # return redirect('Http://127.0.0.1:8000/admin/constance/config/')
-        return redirect('Http://185.211.57.73/admin/constance/config/' )
-    except Exception as e:
-        return HttpResponse(status=500)
-
-
-    # next_url = request.GET.get('next')
-    # return redirect('Http://127.0.0.1:8000/admin/constance/config/')
-    # return redirect('Http://185.211.57.73/admin/constance/config/' )
 
 
 
@@ -300,7 +304,6 @@ def  get_sessions_by_owner(request):
 #         serializer = SessionsSerializer(queryset, many=True)
 #         return Response(serializer.data)
 
-from django.core import serializers
 @api_view(['POST'])
 def get_session_by_id(request):
     r = {}
