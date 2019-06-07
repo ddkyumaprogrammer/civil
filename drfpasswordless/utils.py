@@ -1,5 +1,6 @@
 import logging
 import os
+import traceback
 from json import loads, dumps
 from constance import config
 from django.contrib.auth import get_user_model
@@ -8,6 +9,7 @@ from django.core.mail import send_mail
 from django.template import loader
 from django.utils import timezone
 from requests import post
+from celery_sandbox.tasks import refresh_sms_token
 from civil import settings
 from drfpasswordless.models import CallbackToken
 from drfpasswordless.settings import api_settings
@@ -193,10 +195,6 @@ def send_sms_with_callback_token(user, mobile_token, **kwargs):
 
 
 def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
-    # for handler in logging.root.handlers[:]:
-    #     logging.root.removeHandler(handler)
-    # logging.basicConfig(filename='/opt/w/civil/errors.log', level=logging.DEBUG)
-    # logging.debug("gf")
     if kwargs.get('token_expired'):
         token_headers = {"Content-Type": "application/json"}
         token_data = {"UserApiKey": settings.SMS_IR['USER_API_KEY'], "SecretKey": settings.SMS_IR['SECRET_KEY']}
@@ -222,6 +220,7 @@ def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
     try:
         if api_settings.PASSWORDLESS_TEST_SUPPRESSION is True:
             return True
+        refresh_sms_token()
         r = post(settings.SMS_IR['FAST_SEND_URL'], dumps(data), headers=headers)
         response = loads(r.text)
         # logging.debug (response)
@@ -233,7 +232,9 @@ def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
             print('token expired: {}'.format(response['Message']))
             custom_send_sms_with_callback_token(user, mobile_token, token_expired=True)
     except Exception as e:
-        print(e)
+        trace_back = traceback.format_exc()
+        message = str(e) + "\n" + str(trace_back)
+        logger.debug("ERROR:\n%s" % message)
         return False
 
 

@@ -111,7 +111,11 @@ LOGGING = {
             'propagate': False,
 
         },
-
+        'drfpasswordless': {
+            'handlers': ['console', 'file-app', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     }
 }
 

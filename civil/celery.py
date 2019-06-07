@@ -1,5 +1,6 @@
 import os
 from celery import Celery
+from celery.schedules import crontab
 from django.conf import settings
 
 # from celery.schedules import crontab
@@ -20,7 +21,7 @@ def debug_task(self):
 
 # app.conf.beat_schedule = {
 #     'refresh-sms-token-every-30-minutes': {
-#         'task': 'drfpasswordless.tasks.refresh_sms_token',
+#         'task': 'celery_sandbox.tasks.refresh_sms_token',
 #         'schedule': crontab(minute='*/20'),  # refresh every 20 minutes
 #     },
 # }
