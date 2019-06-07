@@ -240,17 +240,63 @@ class RepViewSet(viewsets.ModelViewSet):
 
         ppl_id = request.user.id
         session_id = request.data.get('session_id' )
-
-        obj = Audiences.objects.get(people =ppl_id,session = session_id)
         rep_ppl_id = Peoples.objects.get(id = request.data.get('rep_ppl'))
-        obj.rep_ppl = rep_ppl_id
-
-        obj.save()
-        leads_as_json = serializers.serialize('json', [obj, ])
-        return HttpResponse(leads_as_json, content_type='json')
+        force = self.request.data.get('force')
 
 
-        # return JsonResponse(model_to_dict(obj), safe=False)
+        intrposition = []
+        myformat = '%Y-%m-%d %H:%M:%S'
+        session = Sessions.objects.get(id = session_id)
+        sdate = datetime.datetime.strptime(str(session.start_time), myformat).date()
+        edate = datetime.datetime.strptime(str(session.end_time), myformat).date()
+        stime = datetime.datetime.strptime(str(session.start_time), myformat).time()
+        etime = datetime.datetime.strptime(str(session.end_time), myformat).time()
+
+        try:
+            _sessions = Sessions.objects.filter(meeting_owner_id = ppl_id)
+        except Sessions.DoesNotExist:
+            _sessions = None
+
+        try:
+            _audiences = Audiences.objects.filter(people_id = ppl_id)
+        except Audiences.DoesNotExist:
+            _audiences = None
+
+        try:
+            rep_audiences = Audiences.objects.filter(rep_ppl = ppl_id)
+        except Audiences.DoesNotExist:
+            rep_audiences = None
+
+
+        for _session in _sessions:
+            if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
+                if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
+                    intrposition.append(_session)
+
+        for _audience in _audiences:
+            if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(edate):
+                if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
+                    intrposition.append(_audience)
+
+
+        for rep_audience in rep_audiences:
+            if str(rep_audience.session.start_time.date()) == str(sdate) or str(rep_audience.session.end_time.date()) == str(edate):
+                if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
+                    intrposition.append(rep_audience)
+
+
+
+        if intrposition != [] and force == 0:
+            return Response(', '.join(map(str, intrposition)) +  "تداخل با جلسه:")
+        else:
+            if Audiences.objects.get(people=ppl_id, session=session_id):
+                obj = Audiences.objects.get(people=ppl_id, session=session_id)
+                obj.rep_ppl = rep_ppl_id
+                obj.save()
+                leads_as_json = serializers.serialize('json', [obj, ])
+                return HttpResponse(leads_as_json, content_type='json')
+
+
 
 
 
