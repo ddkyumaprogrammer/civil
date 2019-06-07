@@ -272,7 +272,7 @@ def  get_sessions_by_date(request):
                     'meeting_owner':str(_session.meeting_owner.first_name)+'-'+str(_session.meeting_owner.last_name),
                     'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time), 'people' : ""}})
 
-    _audiences = Audiences.objects.all()
+    _audiences = Audiences.objects.filter(people = request.user)
     for _audience in _audiences:
         sstime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if sstime.year == sdate.year:
@@ -283,6 +283,16 @@ def  get_sessions_by_date(request):
                                        'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
                                        'people' : str(_audience.people.first_name)+str(_audience.people.last_name)}})
 
+    _audiences = Audiences.objects.filter(rep_ppl = request.user)
+    for _audience in _audiences:
+        sstime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
+        if sstime.year == sdate.year:
+            if sstime.month == sdate.month:
+                if sstime.day == sdate.day:
+                    s_sessions.append({"as replace":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
+                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+'-'+str(_audience.session.meeting_owner.last_name),
+                                       'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
+                                       'people' : str(_audience.rep_ppl.first_name)+str(_audience.rep_ppl.last_name)}})
     return JsonResponse(s_sessions, safe=False)
 
 
