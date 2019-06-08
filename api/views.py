@@ -208,12 +208,12 @@ def get_childern_view_by_token(request):
                                 if c in childs.keys():
                                     pass
                                 else:
-                                    child = []
-                                    child.append(rank.rank_owner.first_name)
-                                    child.append(rank.rank_owner.last_name)
-                                    child.append(rank.rank_owner.mobile)
-                                    child.append(rank.rank_owner.is_legal)
-                                    childs[rank.rank_owner.pk]=child
+                                    child = {"id":rank.rank_owner.id,"first_name":rank.rank_owner.first_name,
+                                             "last_name":rank.rank_owner.last_name,"mobile":rank.rank_owner.mobile,
+                                             "is_legal":rank.rank_owner.is_legal
+                                    }
+                                    childs[rank.rank_name]=child
+                                    child = {}
                             p = rank.id
                             if p in pids:
                                 pass
