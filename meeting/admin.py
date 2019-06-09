@@ -1,7 +1,7 @@
 from django.contrib import admin
 # from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
-from django.http import HttpResponse
-
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django_jalali.admin import JDateFieldListFilter
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
 from .models import *
@@ -76,7 +76,8 @@ class Peoplesadmin(admin.ModelAdmin):
     list_filter = (
         ('is_legal', admin.BooleanFieldListFilter),
     )
-
+    readonly_fields = ('_image',)
+    exclude  = ('_image',)
     inlines = [
         PlacesInLine
     ]
