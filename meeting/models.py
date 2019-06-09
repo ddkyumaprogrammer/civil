@@ -1,6 +1,5 @@
-# import jdatetime
 from django.db import models
-from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth.models import AbstractUser, User
@@ -24,12 +23,9 @@ class Peoples(AbstractUser):
         verbose_name_plural = 'افراد'
 
     def _image(self,):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
-            url = self.image.url,
-            width=self.image.width,
-            height=self.image.height,
-            ))
+        return format_html('<img src="/%s" width="150" height="150" />' % (self.image))
     _image.short_description = 'نمایش عکس'
+    _image.allow_tags = True
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
