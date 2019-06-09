@@ -74,11 +74,11 @@ class Peoplesadmin(admin.ModelAdmin):
     list_display = ('first_name','last_name','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
-                     'fields':(('first_name','last_name'),('mobile','is_legal'),('image','_image'))
+                     'fields':(('first_name','last_name'),('mobile','is_legal'),'image')
                 }),
                 ('بیشتر', {
-                                'classes': ('collapse',),
-                                'fields': ('username', 'password','is_staff','is_active','date_joined','last_login',
+                            'classes': ('collapse',),
+                            'fields': ('username', 'password','is_staff','is_active','date_joined','last_login',
                                            'is_superuser','groups','user_permissions'),
                 }),
                 )
