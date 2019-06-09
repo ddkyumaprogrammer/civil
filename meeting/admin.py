@@ -61,7 +61,7 @@ class PlacesInLine(admin.TabularInline):
     can_delete = True
 @admin.register(Peoples)
 class Peoplesadmin(admin.ModelAdmin):
-    list_display = ('first_name','last_name','mobile','is_legal','_places')
+    list_display = ('_peoples','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
                      'fields':(('first_name','last_name'),('mobile','is_legal'),'image','_image')

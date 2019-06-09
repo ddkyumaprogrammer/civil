@@ -26,6 +26,9 @@ class Peoples(AbstractUser):
     _image.short_description = 'نمایش عکس'
     _image.allow_tags = True
 
+    def _peoples(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+    _peoples.short_description = 'نام'
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
