@@ -49,32 +49,22 @@ class Audiencesadmin(admin.ModelAdmin):
         return obj.session.start_time
     _stime.short_description = 'زمان جلسه'
 
-
 @admin.register(Places)
 class Placesadmin(admin.ModelAdmin):
     list_display = ('place_title','place_owner','place_address',)
-    fieldsets =(
-                (None,{
-                     'fields':(('place_title','place_owner'),('Longitude','Latitude'))
-                }),
-                (' بیشتر', {
-                    'classes': ('collapse',),
-                    'fields': ('place_address',),
-                }),
-                )
+    fields = (('place_title','place_owner'),('Longitude','Latitude'),'place_address')
     search_fields = ['place_owner__last_name',]
 
 class PlacesInLine(admin.TabularInline):
     model = Places
     extra = 1
     can_delete = True
-
 @admin.register(Peoples)
 class Peoplesadmin(admin.ModelAdmin):
     list_display = ('first_name','last_name','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
-                     'fields':(('first_name','last_name'),('mobile','is_legal'),'image')
+                     'fields':(('first_name','last_name'),('mobile','is_legal'),'image','_image')
                 }),
                 ('بیشتر', {
                             'classes': ('collapse',),
@@ -90,17 +80,9 @@ class Peoplesadmin(admin.ModelAdmin):
     inlines = [
         PlacesInLine
     ]
-
-    def _image(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
-            url = obj.image.url,
-            width=obj.image.width,
-            height=obj.image.height,
-            ))
     def _places(self, obj):
         return list(obj.place_owner.all().values_list('place_title', flat=True))
     _places.short_description = 'نام مکان'
-    _image.short_description = 'نمایش عکس'
 
 
 
@@ -113,16 +95,10 @@ class AudiencesInLine(admin.TabularInline):
 @admin.register(Sessions)
 class Sessionsadmin(admin.ModelAdmin):
     list_display = ('meeting_title','start_time','end_time','meeting_owner','place','_audiences')
-    fieldsets =(
-                (None,{
-                     'classes': ('wide', 'extrapretty'),
-                     'fields':('meeting_title','meeting_owner','place',('start_time','end_time'))
-                }),
-                )
+    fields = ('meeting_title','meeting_owner',('start_time','end_time'),'place')
     ordering = ['start_time']
     search_fields = ['meeting_title','start_time','meeting_owner__last_name',]
     list_filter = (('start_time',JDateFieldListFilter),)
-    # list_filter = (('start_time',DateRangeFilter),)
     date_hierarchy = 'start_time'
 
     inlines = [

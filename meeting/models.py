@@ -1,6 +1,7 @@
 # import jdatetime
 from django.db import models
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth.models import AbstractUser, User
 from model_utils.models import TimeStampedModel, TimeFramedModel
@@ -22,6 +23,14 @@ class Peoples(AbstractUser):
         verbose_name = 'فرد'
         verbose_name_plural = 'افراد'
 
+    def _image(self,):
+        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+            url = self.image.url,
+            width=self.image.width,
+            height=self.image.height,
+            ))
+    _image.short_description = 'نمایش عکس'
+
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
@@ -35,9 +44,9 @@ class Peoples(AbstractUser):
 
 class Places(models.Model):
     place_title = models.CharField(max_length=50,null=True, blank=True, verbose_name='نام ')
-    place_address = models.TextField(null=True, blank=True, verbose_name='آدرس')
     Longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True,blank=True,verbose_name='طول جغرافیای')
     Latitude = models.DecimalField(max_digits=9, decimal_places=6,null=True,blank=True,verbose_name='عرض جغرافیای ')
+    place_address = models.TextField(null=True, blank=True, verbose_name='آدرس')
     place_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name=' صاحب محل',related_name='place_owner',
                                   on_delete=models.CASCADE)
 
