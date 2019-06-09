@@ -112,7 +112,7 @@ class Sessionsadmin(admin.ModelAdmin):
         _len = obj.session.all().count()
         _list = []
         for i in range(0,_len):
-            _list.append(str(first_list[i])+str(last_list[i]))
+            _list.append(str(first_list[i])+" "+str(last_list[i]))
         return _list
     _audiences.short_description = 'حاضرین'
 
