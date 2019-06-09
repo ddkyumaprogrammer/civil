@@ -45,7 +45,7 @@ class Places(models.Model):
         verbose_name_plural = 'محل ها'
 
     def __str__(self):
-        return '({}){}'.format(self.place_owner, self.place_title)
+        return '{}'.format(self.place_title)
 
 
 class Ranks(MPTTModel):
@@ -92,7 +92,7 @@ class Sessions (models.Model):
         ordering = ('start_time',)
 
     def __str__(self):
-        return '({}){}'.format( self.meeting_owner, self.meeting_title)
+        return '{}'.format(self.meeting_title)
 
 
 
@@ -111,7 +111,7 @@ class Audiences (models.Model):
         verbose_name_plural = 'حاضرین'
 
     def __str__(self):
-        return '{}'.format(self.session.meeting_title)
+        return '{} {}'.format(self.people.first_name, self.people.last_name)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

@@ -129,11 +129,11 @@ class Sessionsadmin(admin.ModelAdmin):
 
     def _audiences(self, obj):
         first_list = list(obj.session.all().values_list('people__first_name', flat=True))
-        last_list = list(obj.session.all().values_list('people__first_name', flat=True))
-        _len = len(first_list)
+        last_list = list(obj.session.all().values_list('people__last_name', flat=True))
+        _len = obj.session.all().count()
         _list = []
         for i in range(0,_len):
-            _list.append(first_list[i]+last_list[i])
+            _list.append(str(first_list[i])+str(last_list[i]))
         return _list
     _audiences.short_description = 'حاضرین'
 
