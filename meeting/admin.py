@@ -1,5 +1,3 @@
-import csv
-
 from django.contrib import admin
 # from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 from django.http import HttpResponse
@@ -7,11 +5,10 @@ from django.http import HttpResponse
 from django_jalali.admin import JDateFieldListFilter
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
 from .models import *
-from django.contrib.admin import AdminSite
 
 
 admin.empty_value_display = '(None)'
-_list_per_page = 20
+admin.ModelAdmin.list_per_page = 10
 
 
 # admin.site.register(Ranks,MPTTModelAdmin)
@@ -42,40 +39,15 @@ admin.site.register(Ranks,
 # MPTT_ADMIN_LEVEL_INDENT = 20
 
 
-class ExportCsvMixin:
-    def export_as_csv(self, request, queryset):
-
-        meta = self.model._meta
-        field_names = [field.name for field in meta.fields]
-
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
-        writer = csv.writer(response)
-
-        writer.writerow(field_names)
-        for obj in queryset:
-            row = writer.writerow([getattr(obj, field) for field in field_names])
-
-        return response
-
-    export_as_csv.short_description = "Export Selected"
-
-
-
-
-
-
 @admin.register(Audiences)
 class Audiencesadmin(admin.ModelAdmin):
     list_display = ('_stime','session','people','rep_ppl',)
     fields =('session','people','rep_ppl',)
     search_fields = ['session__title','people__last_name','rep_ppl__last_name',]
 
-
     def _stime(self, obj):
         return obj.session.start_time
-
-    _stime.short_description = 'تعداد افراد'
+    _stime.short_description = 'زمان جلسه'
 
 
 @admin.register(Places)
@@ -91,12 +63,6 @@ class Placesadmin(admin.ModelAdmin):
                 }),
                 )
     search_fields = ['place_owner__last_name',]
-    # list_filter = ('place_title',)
-
-
-
-
-
 
 class PlacesInLine(admin.TabularInline):
     model = Places
@@ -104,8 +70,8 @@ class PlacesInLine(admin.TabularInline):
     can_delete = True
 
 @admin.register(Peoples)
-class Peoplesadmin(admin.ModelAdmin,ExportCsvMixin):
-    list_display = ('first_name','last_name','mobile','is_legal')
+class Peoplesadmin(admin.ModelAdmin):
+    list_display = ('first_name','last_name','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
                      'fields':(('first_name','last_name'),('mobile','is_legal'),'image','personly_image')
@@ -124,21 +90,27 @@ class Peoplesadmin(admin.ModelAdmin,ExportCsvMixin):
     inlines = [
         PlacesInLine
     ]
-    actions = ['export_as_csv']
-    def _sessions(self, obj):
-        return obj.sessions_set.all().count()
-    _sessions.short_description = 'مکان ها'
 
+    def _places(self, obj):
+        return list(obj.place_owner.all().values_list('place_title', flat=True))
+    _places.short_description = 'نام مکان ها'
 
-
+    def personly_image(self, obj):
+        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+            url = obj.image.url,
+            width=obj.image.width,
+            height=obj.image.height,
+            )
+    )
 
 class AudiencesInLine(admin.TabularInline):
     model = Audiences
     extra = 1
     can_delete = True
+
 @admin.register(Sessions)
-class Sessionsadmin(admin.ModelAdmin,ExportCsvMixin):
-    list_display = ('meeting_title','start_time','end_time','meeting_owner','place',)
+class Sessionsadmin(admin.ModelAdmin):
+    list_display = ('meeting_title','start_time','end_time','meeting_owner','place','_audiences')
     fieldsets =(
                 (None,{
                      'classes': ('wide', 'extrapretty'),
@@ -151,18 +123,19 @@ class Sessionsadmin(admin.ModelAdmin,ExportCsvMixin):
     # list_filter = (('start_time',DateRangeFilter),)
     date_hierarchy = 'start_time'
 
-
-    # exclude = ('meeting_title',)
-
     inlines = [
         AudiencesInLine
     ]
 
-    def _sessions(self, obj):
-        return obj.sessions_set.all().count()
-
-
-    _sessions.short_description = 'تعداد افراد'
+    def _audiences(self, obj):
+        first_list = list(obj.session.all().values_list('people__first_name', flat=True))
+        last_list = list(obj.session.all().values_list('people__first_name', flat=True))
+        _len = len(first_list)
+        _list = []
+        for i in range(0,_len):
+            _list.append(first_list[i]+last_list[i])
+        return _list
+    _audiences.short_description = 'حاضرین'
 
 
 
