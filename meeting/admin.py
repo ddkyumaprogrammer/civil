@@ -57,7 +57,7 @@ class Placesadmin(admin.ModelAdmin):
                 (None,{
                      'fields':(('place_title','place_owner'),('Longitude','Latitude'))
                 }),
-                ('Advanced options', {
+                (' بیشتر', {
                     'classes': ('collapse',),
                     'fields': ('place_address',),
                 }),
@@ -76,7 +76,7 @@ class Peoplesadmin(admin.ModelAdmin):
                 (None,{
                      'fields':(('first_name','last_name'),('mobile','is_legal'),'image','personly_image')
                 }),
-                ('Advanced options', {
+                ('بیشتر', {
                                 'classes': ('collapse',),
                                 'fields': ('username', 'password','is_staff','is_active','date_joined','last_login',
                                            'is_superuser','groups','user_permissions'),
@@ -91,17 +91,19 @@ class Peoplesadmin(admin.ModelAdmin):
         PlacesInLine
     ]
 
-    def _places(self, obj):
-        return list(obj.place_owner.all().values_list('place_title', flat=True))
-    _places.short_description = 'نام مکان ها'
-
     def personly_image(self, obj):
         return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
             url = obj.image.url,
             width=obj.image.width,
             height=obj.image.height,
-            )
-    )
+            ))
+    def _places(self, obj):
+        return list(obj.place_owner.all().values_list('place_title', flat=True))
+    _places.short_description = 'نام مکان'
+    personly_image.short_description = 'نمایش عکس'
+
+
+
 
 class AudiencesInLine(admin.TabularInline):
     model = Audiences

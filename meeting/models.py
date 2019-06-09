@@ -14,7 +14,7 @@ class Peoples(AbstractUser):
     last_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='نام خانوادگی')
     mobile_verified = models.BooleanField(default=False, verbose_name='موبایل تأیید شده')
     is_legal = models.BooleanField(default=True, verbose_name='شخصیت حقوقی')
-    image = models.ImageField(null=True, blank=True, upload_to=get_image_path)
+    image = models.ImageField(null=True, blank=True, upload_to=get_image_path,verbose_name='عکس')
     MOBILE_FIELD = 'mobile'
     description = models.TextField(null=True, blank=True, verbose_name='توضیحات')
     class Meta:
