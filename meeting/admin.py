@@ -7,7 +7,7 @@ from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
 from .models import *
 
 
-admin.empty_value_display = '(None)'
+admin.empty_value_display = ''
 admin.ModelAdmin.list_per_page = 10
 
 
