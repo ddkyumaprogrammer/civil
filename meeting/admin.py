@@ -74,7 +74,7 @@ class Peoplesadmin(admin.ModelAdmin):
     list_display = ('first_name','last_name','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
-                     'fields':(('first_name','last_name'),('mobile','is_legal'),'image','personly_image')
+                     'fields':(('first_name','last_name'),('mobile','is_legal'),('image','_image'))
                 }),
                 ('بیشتر', {
                                 'classes': ('collapse',),
@@ -91,7 +91,7 @@ class Peoplesadmin(admin.ModelAdmin):
         PlacesInLine
     ]
 
-    def personly_image(self, obj):
+    def _image(self, obj):
         return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
             url = obj.image.url,
             width=obj.image.width,
@@ -100,7 +100,7 @@ class Peoplesadmin(admin.ModelAdmin):
     def _places(self, obj):
         return list(obj.place_owner.all().values_list('place_title', flat=True))
     _places.short_description = 'نام مکان'
-    personly_image.short_description = 'نمایش عکس'
+    _image.short_description = 'نمایش عکس'
 
 
 
