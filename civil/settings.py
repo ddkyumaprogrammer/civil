@@ -327,6 +327,7 @@ CACHES = {
 
 # celery flower -A civil --address=127.0.0.1 --port=8000
 # celery -A civil worker -l info
+# celery -A civil beat -l info
 # celery -A civil worker -l debug
 # Celery settings
 
@@ -340,8 +341,8 @@ CELERY_TIMEZONE = 'Asia/Tehran'
 CELERY_BEAT_SCHEDULE = {
     'refresh-sms-token-every-30-minutes': {
         'task': 'celery_sandbox.tasks.refresh_sms_token',
-        # 'schedule': crontab(minute ='*/30')  # refresh every 20 minutes
-        'schedule': 900.0,  # refresh every 20 minutes
+        'schedule': crontab(minute ='*/1')  # refresh every 20 minutes
+        # 'schedule': 900.0,  # refresh every 20 minutes
     },
 
 }
