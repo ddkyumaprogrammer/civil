@@ -220,7 +220,6 @@ def custom_send_sms_with_callback_token(user, mobile_token, **kwargs):
     try:
         if api_settings.PASSWORDLESS_TEST_SUPPRESSION is True:
             return True
-        refresh_sms_token()
         r = post(settings.SMS_IR['FAST_SEND_URL'], dumps(data), headers=headers)
         response = loads(r.text)
         # logging.debug (response)
