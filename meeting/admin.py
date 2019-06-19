@@ -47,7 +47,7 @@ class Audiencesadmin(admin.ModelAdmin):
 
     def _stime(self, obj):
         return obj.session.start_time
-    _stime.short_description = 'زمان جلسه'
+    _stime.short_description = 'زمان شروع جلسه'
 
 @admin.register(Places)
 class Placesadmin(admin.ModelAdmin):
