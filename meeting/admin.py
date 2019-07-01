@@ -35,6 +35,8 @@ admin.site.register(Ranks,
     list_display_links=(
         'indented_title',
     ),
+    raw_id_fields = ('rank_owner', 'parent'
+                     ),
 )
 # MPTT_ADMIN_LEVEL_INDENT = 20
 
@@ -42,6 +44,7 @@ admin.site.register(Ranks,
 @admin.register(Audiences)
 class Audiencesadmin(admin.ModelAdmin):
     list_display = ('_stime','session','people','rep_ppl',)
+    raw_id_fields = ('people','rep_ppl','session')
     fields =('session','people','rep_ppl',)
     search_fields = ['session__title','people__last_name','rep_ppl__last_name',]
 
@@ -52,6 +55,7 @@ class Audiencesadmin(admin.ModelAdmin):
 @admin.register(Places)
 class Placesadmin(admin.ModelAdmin):
     list_display = ('place_title','place_owner','place_address',)
+    raw_id_fields = ('place_owner',)
     fields = (('place_title','place_owner'),('Longitude','Latitude'),'place_address')
     search_fields = ['place_owner__last_name',]
 
@@ -90,6 +94,7 @@ class Peoplesadmin(admin.ModelAdmin):
 
 class AudiencesInLine(admin.TabularInline):
     model = Audiences
+    raw_id_fields = ('people','rep_ppl')
     extra = 1
     can_delete = True
 
