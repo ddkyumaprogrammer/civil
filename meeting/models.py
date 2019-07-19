@@ -30,7 +30,7 @@ class Peoples(AbstractUser):
     def _image(self):
         name = self.first_name + " " + self.last_name
         if self.image:
-            return mark_safe('<img src="media/%s" width=150 height=200 alt="%s"/>' % (self.image,name))
+            return mark_safe('<img src="%s" width=150 height=200 alt="%s"/>' % (self.image,name))
         else:
             return "بدون عکس"
     _image.short_description = 'عکس'
