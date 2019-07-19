@@ -1,4 +1,5 @@
-import os
+import jdatetime
+from django.utils.text import slugify
 from json import loads, dumps
 from requests import post
 from django.conf import settings
@@ -45,7 +46,12 @@ def send_ultrafast_sms(**kwargs):
 
 
 def get_image_path(instance, filename):
-    return os.path.join('img/', str(instance), filename)
+    title = instance.first_name + " " + instance.last_name
+    slug = slugify(title)
+    basename, file_extension = filename.split(".")
+    date = jdatetime.datetime.now().date()
+    new_filename = "%s--%s.%s" % (slug , date , file_extension)
+    return "%s/%s" % (slug, new_filename)
 
 
 

@@ -1,8 +1,14 @@
+import os
+
 from django.db import models
+from django.utils.html import format_html, escape
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth.models import AbstractUser, User
 from model_utils.models import TimeStampedModel, TimeFramedModel
+
+from civil import settings
 from django_jalali.db import models as jmodels
 from meeting.utils import get_image_path
 
@@ -21,9 +27,13 @@ class Peoples(AbstractUser):
         verbose_name = 'فرد'
         verbose_name_plural = 'افراد'
 
-    def _image(self,):
-        return mark_safe('<img src="%s" width="150" height="150" />' % (self.image))
-    _image.short_description = 'نمایش عکس'
+    def _image(self):
+        name = self.first_name + " " + self.last_name
+        if self.image:
+            return mark_safe('<img src="media/%s" width=150 height=200 alt="%s"/>' % (self.image,name))
+        else:
+            return "بدون عکس"
+    _image.short_description = 'عکس'
     _image.allow_tags = True
 
     def _peoples(self):

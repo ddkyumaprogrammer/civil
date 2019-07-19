@@ -68,7 +68,7 @@ class Peoplesadmin(admin.ModelAdmin):
     list_display = ('_peoples','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
-                     'fields':(('first_name','last_name'),('mobile','is_legal'),'image','_image')
+                     'fields':(('first_name','last_name'),('mobile','is_legal'),('image','_image'))
                 }),
                 ('بیشتر', {
                             'classes': ('collapse',),
@@ -82,9 +82,7 @@ class Peoplesadmin(admin.ModelAdmin):
     )
     readonly_fields = ('_image',)
     exclude  = ('_image',)
-    inlines = [
-        PlacesInLine
-    ]
+    inlines = [PlacesInLine]
     def _places(self, obj):
         return list(obj.place_owner.all().values_list('place_title', flat=True))
     _places.short_description = 'نام مکان'
