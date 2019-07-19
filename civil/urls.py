@@ -20,6 +20,13 @@ from api.views import *
 from civil import settings
 from meeting.views import HomePageView
 
+admin.autodiscover()
+
+admin.site.site_header = "Civil Admin"
+admin.site.site_title = "Civil Admin Portal"
+admin.site.index_title = "Welcome to Civil Portal"
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/', include('api.urls')),
