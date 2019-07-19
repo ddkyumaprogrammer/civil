@@ -1,3 +1,5 @@
+import os
+
 import jdatetime
 from django.utils.text import slugify
 from json import loads, dumps
@@ -51,7 +53,6 @@ def get_image_path(instance, filename):
     basename, file_extension = filename.split(".")
     date = jdatetime.datetime.now().date()
     new_filename = "%s.%s" % (date , file_extension)
-    return "%s/%s" % (slug, new_filename)
-
+    return os.path.join( slug , new_filename)
 
 
