@@ -50,7 +50,7 @@ def get_image_path(instance, filename):
     slug = slugify(title)
     basename, file_extension = filename.split(".")
     date = jdatetime.datetime.now().date()
-    new_filename = "%s--%s.%s" % (slug , date , file_extension)
+    new_filename = "%s.%s" % (date , file_extension)
     return "%s/%s" % (slug, new_filename)
 
 
