@@ -140,7 +140,7 @@ INSTALLED_APPS = (
     'bootstrap4',
     'debug_toolbar',
     'celery',
-    'django_celery_results',
+    # 'django_celery_results',
     'django_celery_beat',
     'redis',
     'constance',
