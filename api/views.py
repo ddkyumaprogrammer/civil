@@ -181,6 +181,7 @@ def get_childern_view_by_token(request):
     except Ranks.DoesNotExist:
         return HttpResponse('جایگاهی تعریف نشده است.',status=500)
     childern = {}
+    r =[]
     _parent_id = []
     try:
         if request.data.get('rank_name'):
@@ -208,10 +209,19 @@ def get_childern_view_by_token(request):
                                 if c in childs.keys():
                                     pass
                                 else:
-                                    child = {"id":rank.rank_owner.id,"first_name":rank.rank_owner.first_name,
+                                    pic = ("http://127.0.0.1:8001/static/uploads/%s" % rank.rank_owner.image)
+
+                                    # title = rank.rank_owner.first_name + " " + rank.rank_owner.last_name
+                                    # slug = slugify(title)
+                                    # basename, file_extension = rank.rank_owner.image.split(".")
+                                    # new_filename = "%s.%s" % (slug, file_extension)
+                                    child = {"rank_name":rank.rank_name,"id":rank.rank_owner.id,"first_name":rank.rank_owner.first_name,
                                              "last_name":rank.rank_owner.last_name,"mobile":rank.rank_owner.mobile,
-                                             "is_legal":rank.rank_owner.is_legal
-                                    }
+                                             "is_legal":rank.rank_owner.is_legal,
+                                             # "pic":"http://185.211.57.73/static/uploads/%s" % (rank.rank_owner.image)
+                                                "pic" : pic
+                                             }
+                                    r.append(child)
                                     childs[rank.rank_name]=child
                                     child = {}
                             p = rank.id
@@ -219,7 +229,14 @@ def get_childern_view_by_token(request):
                                 pass
                             else:
                                 pids.append(rank.id)
-            childern[_rank.rank_name] = childs
+            if request.data.get('rank_name'):
+                _rank_ = Ranks.objects.get(rank_owner=request.user, rank_name=request.data.get('rank_name'))
+            else:
+                _rank_ = Ranks.objects.get(rank_owner=request.user)
+
+            childern["جایگاه"]=_rank_.rank_name
+            childern["تعداد کل"]=len(r)
+            childern["لیست"] = r
         t = 0
         for i in childern.values():
             if i:

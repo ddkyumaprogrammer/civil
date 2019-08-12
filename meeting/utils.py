@@ -48,7 +48,7 @@ def send_ultrafast_sms(**kwargs):
 
 
 def get_image_path(instance, filename):
-    title = instance.first_name + " " + instance.last_name
+    title = instance.id
     slug = slugify(title)
     basename, file_extension = filename.split(".")
     date = jdatetime.datetime.now().date()
