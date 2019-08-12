@@ -36,17 +36,20 @@ class SessionsViewSet(viewsets.ModelViewSet):
         etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
         force = self.request.data.get('force')
 
+        r = []
         ppls = []
-        owner = {}
-        owner['people'] = request.user.mobile
-        ppls.append(owner)
+        ppls.append(request.user.mobile)
         if 'audiences' in request.data:
             audiences = request.data.get('audiences')
-            ppl = ppls + audiences
+            for audience in audiences:
+                r = audience.values()
+                for i in r:
+                    ppls.append(i)
+
 
         for ppl in ppls:
             try:
-                ppl_id = Peoples.objects.get(mobile=ppl.get('people')).id
+                ppl_id = Peoples.objects.get(mobile=ppl).id
             except Peoples.DoesNotExist:
                 ppl = None
 
@@ -60,12 +63,25 @@ class SessionsViewSet(viewsets.ModelViewSet):
             except Audiences.DoesNotExist:
                 _audiences = None
 
+            try:
+                _rep_ppls = Audiences.objects.filter(rep_ppl_id=ppl_id)
+            except Audiences.DoesNotExist:
+                _rep_ppls = None
+
             for _session in _sessions:
                 if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
                     if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
                         s = {}
                         s[str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name)] = str(_session.meeting_title)
                         intrposition.append(s)
+            for _rep_ppl in _rep_ppls:
+                if str(_rep_ppl.session.start_time.date()) == str(sdate) or str(_rep_ppl.session.end_time.date()) == str(
+                        edate):
+                    if stime <= _rep_ppl.session.end_time.time() <= etime or stime <= _rep_ppl.session.start_time.time() <= etime:
+                        a = {}
+                        a[str(_rep_ppl.people.first_name)+" "+str(_rep_ppl.people.last_name)] = str(_rep_ppl.session.meeting_title)
+                        intrposition.append(a)
+
             for _audience in _audiences:
                 if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
                         edate):
@@ -74,9 +90,9 @@ class SessionsViewSet(viewsets.ModelViewSet):
                         a[str(_audience.people.first_name)+" "+str(_audience.people.last_name)] = str(_audience.session.meeting_title)
                         intrposition.append(a)
 
-
         if intrposition != [] and force == 0:
-            return Response( ', '.join(map(str, intrposition))+"--"+"تداخل با جلسه")
+            return JsonResponse(intrposition, safe=False)
+            # return Response( ','.join(map(str, intrposition))+"--"+"تداخل با جلسه")
 
 
         else:
