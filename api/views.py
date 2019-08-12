@@ -1,3 +1,4 @@
+import collections
 import datetime
 import json
 import traceback
@@ -36,7 +37,6 @@ class SessionsViewSet(viewsets.ModelViewSet):
         etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
         force = self.request.data.get('force')
 
-        r = []
         ppls = []
         ppls.append(request.user.mobile)
         if 'audiences' in request.data:
@@ -45,8 +45,12 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 r = audience.values()
                 for i in r:
                     ppls.append(i)
-
-
+        ppl_ower_name = []
+        ppl_ower_id = []
+        ppl_aud_name = []
+        ppl_aud_id = []
+        ppl_rep_name = []
+        ppl_rep_id = []
         for ppl in ppls:
             try:
                 ppl_id = Peoples.objects.get(mobile=ppl).id
@@ -69,33 +73,66 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 _rep_ppls = None
 
             for _session in _sessions:
+                s = {}
                 if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
                     if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
-                        s = {}
                         s[str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name)] = str(_session.id)
-                        s["تشکیل دهنده"] = str(_session.meeting_title)
-
                         intrposition.append(s)
+                        ppl_ower_name.append(_session.meeting_owner.id)
+                        ppl_ower_id.append(_session.id)
             for _rep_ppl in _rep_ppls:
+                a = {}
                 if str(_rep_ppl.session.start_time.date()) == str(sdate) or str(_rep_ppl.session.end_time.date()) == str(
                         edate):
                     if stime <= _rep_ppl.session.end_time.time() <= etime or stime <= _rep_ppl.session.start_time.time() <= etime:
-                        a = {}
                         a[str(_rep_ppl.people.first_name)+" "+str(_rep_ppl.people.last_name)] = str(_rep_ppl.session.id)
-                        a["جایگزین"] = str(_rep_ppl.session.meeting_title)
                         intrposition.append(a)
-
+                        ppl_rep_name.append(_rep_ppl.people.id)
+                        ppl_rep_id.append(_rep_ppl.session.id)
             for _audience in _audiences:
+                k = {}
                 if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
                         edate):
                     if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
-                        k = {}
                         k[str(_audience.people.first_name)+" "+str(_audience.people.last_name)] = str(_audience.session.id)
-                        k["دعوت شده"] = str(_audience.session.meeting_title)
                         intrposition.append(k)
+                        ppl_aud_name.append(_audience.people.id)
+                        ppl_aud_id.append(_audience.session.id)
+
+        owner = len(ppl_ower_name)
+        aud = len(ppl_aud_name)
+        rep = len(ppl_rep_name)
+        ppl_ower = []
+        ppl_aud = []
+        ppl_rep = []
+        for i in range(owner):
+            w = {}
+            w[ppl_ower_name[i]]=ppl_ower_id[i]
+            ppl_ower.append(w)
+        for i in range(aud):
+            w = {}
+            w[ppl_aud_name[i]]=ppl_aud_id[i]
+            ppl_aud.append(w)
+        for i in range(rep):
+            w = {}
+            w[ppl_rep_name[i]]=ppl_rep_id[i]
+            ppl_rep.append(w)
+        no_dupes_owner = [x for n, x in enumerate(ppl_ower) if x not in ppl_ower[:n]]
+        no_dupes_aud = [x for n, x in enumerate(ppl_aud) if x not in ppl_aud[:n]]
+        no_dupes_rep = [x for n, x in enumerate(ppl_rep) if x not in ppl_rep[:n]]
+        ppl_sesion = {}
+        ppl_sesion["تشکیل دهنده"] = no_dupes_owner
+        ppl_sesion["دعوت شده"] = no_dupes_aud
+        ppl_sesion["جایگزین"] = no_dupes_rep
+
+        # ppl_sesionp = {}
+        # ppl_sesionp["تشکیل دهنده"] = ppl_ower
+        # ppl_sesionp["دعوت شده"] = ppl_aud
+        # ppl_sesionp["جایگزین"] = ppl_rep
+        # print(ppl_sesionp)
 
         if intrposition != [] and force == 0:
-            return JsonResponse(intrposition, safe=False)
+            return JsonResponse(ppl_sesion, safe=False)
             # return Response( ','.join(map(str, intrposition))+"--"+"تداخل با جلسه")
 
 
