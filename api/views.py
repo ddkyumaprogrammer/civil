@@ -72,23 +72,27 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
                     if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
                         s = {}
-                        s[str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name)] = str(_session.meeting_title)
+                        s[str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name)] = str(_session.id)
+                        s["تشکیل دهنده"] = str(_session.meeting_title)
+
                         intrposition.append(s)
             for _rep_ppl in _rep_ppls:
                 if str(_rep_ppl.session.start_time.date()) == str(sdate) or str(_rep_ppl.session.end_time.date()) == str(
                         edate):
                     if stime <= _rep_ppl.session.end_time.time() <= etime or stime <= _rep_ppl.session.start_time.time() <= etime:
                         a = {}
-                        a[str(_rep_ppl.people.first_name)+" "+str(_rep_ppl.people.last_name)] = str(_rep_ppl.session.meeting_title)
+                        a[str(_rep_ppl.people.first_name)+" "+str(_rep_ppl.people.last_name)] = str(_rep_ppl.session.id)
+                        a["جایگزین"] = str(_rep_ppl.session.meeting_title)
                         intrposition.append(a)
 
             for _audience in _audiences:
                 if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
                         edate):
                     if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
-                        a = {}
-                        a[str(_audience.people.first_name)+" "+str(_audience.people.last_name)] = str(_audience.session.meeting_title)
-                        intrposition.append(a)
+                        k = {}
+                        k[str(_audience.people.first_name)+" "+str(_audience.people.last_name)] = str(_audience.session.id)
+                        k["دعوت شده"] = str(_audience.session.meeting_title)
+                        intrposition.append(k)
 
         if intrposition != [] and force == 0:
             return JsonResponse(intrposition, safe=False)
