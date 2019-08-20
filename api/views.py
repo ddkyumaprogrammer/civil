@@ -516,7 +516,7 @@ def get_session_by_id(request):
     session.append({'id': _session.id, 'meeting_title': str(_session.meeting_title),
                     'meeting_owner': str(_session.meeting_owner.first_name) + '-' +
                     str(_session.meeting_owner.last_name),'start_time': str(_session.start_time),
-                     'end_time': str(_session.end_time),'people': str(r)})
+                     'end_time': str(_session.end_time),'people': r})
     return JsonResponse(session, safe=False)
 
 
