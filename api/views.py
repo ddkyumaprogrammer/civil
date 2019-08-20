@@ -18,6 +18,7 @@ from meeting.models import *
 from django.core import serializers
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -76,25 +77,30 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 s = {}
                 if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
                     if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
-                        s[str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name)] = str(_session.id)
+                        s[str(_session.meeting_owner.first_name) + ' ' + str(_session.meeting_owner.last_name)] = str(
+                            _session.id)
                         intrposition.append(s)
                         ppl_ower_name.append(_session.meeting_owner.id)
                         ppl_ower_id.append(_session.id)
             for _rep_ppl in _rep_ppls:
                 a = {}
-                if str(_rep_ppl.session.start_time.date()) == str(sdate) or str(_rep_ppl.session.end_time.date()) == str(
-                        edate):
+                if str(_rep_ppl.session.start_time.date()) == str(sdate) or str(
+                        _rep_ppl.session.end_time.date()) == str(
+                    edate):
                     if stime <= _rep_ppl.session.end_time.time() <= etime or stime <= _rep_ppl.session.start_time.time() <= etime:
-                        a[str(_rep_ppl.people.first_name)+" "+str(_rep_ppl.people.last_name)] = str(_rep_ppl.session.id)
+                        a[str(_rep_ppl.people.first_name) + " " + str(_rep_ppl.people.last_name)] = str(
+                            _rep_ppl.session.id)
                         intrposition.append(a)
                         ppl_rep_name.append(_rep_ppl.people.id)
                         ppl_rep_id.append(_rep_ppl.session.id)
             for _audience in _audiences:
                 k = {}
-                if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
-                        edate):
+                if str(_audience.session.start_time.date()) == str(sdate) or str(
+                        _audience.session.end_time.date()) == str(
+                    edate):
                     if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
-                        k[str(_audience.people.first_name)+" "+str(_audience.people.last_name)] = str(_audience.session.id)
+                        k[str(_audience.people.first_name) + " " + str(_audience.people.last_name)] = str(
+                            _audience.session.id)
                         intrposition.append(k)
                         ppl_aud_name.append(_audience.people.id)
                         ppl_aud_id.append(_audience.session.id)
@@ -107,15 +113,15 @@ class SessionsViewSet(viewsets.ModelViewSet):
         ppl_rep = []
         for i in range(owner):
             w = {}
-            w[ppl_ower_name[i]]=ppl_ower_id[i]
+            w[ppl_ower_name[i]] = ppl_ower_id[i]
             ppl_ower.append(w)
         for i in range(aud):
             w = {}
-            w[ppl_aud_name[i]]=ppl_aud_id[i]
+            w[ppl_aud_name[i]] = ppl_aud_id[i]
             ppl_aud.append(w)
         for i in range(rep):
             w = {}
-            w[ppl_rep_name[i]]=ppl_rep_id[i]
+            w[ppl_rep_name[i]] = ppl_rep_id[i]
             ppl_rep.append(w)
         no_dupes_owner = [x for n, x in enumerate(ppl_ower) if x not in ppl_ower[:n]]
         no_dupes_aud = [x for n, x in enumerate(ppl_aud) if x not in ppl_aud[:n]]
@@ -138,7 +144,7 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
         else:
             if serializer.is_valid(raise_exception=True):
-                obj = serializer.save(meeting_owner = request.user)
+                obj = serializer.save(meeting_owner=request.user)
                 # obj = Sessions.objects.get(meeting_title=request.data.get('title'))
                 # obj.meeting_owner = request.user
                 # obj.save()
@@ -146,11 +152,11 @@ class SessionsViewSet(viewsets.ModelViewSet):
                     audiences = request.data.get('audiences')
                     for audience in audiences:
                         try:
-                            ppl = Peoples.objects.get(mobile = audience.get('people')).id
+                            ppl = Peoples.objects.get(mobile=audience.get('people')).id
                         except Peoples.DoesNotExist:
                             ppl = None
                         try:
-                            rppl = Peoples.objects.get(mobile = audience.get('rep_ppl')).id
+                            rppl = Peoples.objects.get(mobile=audience.get('rep_ppl')).id
                         except Peoples.DoesNotExist:
                             rppl = None
                         try:
@@ -161,9 +167,6 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-
 
 
 class PeopleViewSet(viewsets.ModelViewSet):
@@ -189,7 +192,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
         except Peoples.DoesNotExist:
             obj = Peoples.objects.create(id=_id)
 
-        for k,v in request.data.items():
+        for k, v in request.data.items():
             if k == 'first_name':
                 obj.first_name = v
             elif k == 'last_name':
@@ -206,7 +209,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
                 places = request.data.get('places')
             obj.save()
         for place in places:
-            Places.objects.create(place_owner=obj,**place)
+            Places.objects.create(place_owner=obj, **place)
         leads_as_json = serializers.serialize('json', [obj, ])
         return HttpResponse(leads_as_json, content_type='json')
         # return JsonResponse([obj.first_name,obj.last_name,obj.is_legal], safe=False)
@@ -221,7 +224,7 @@ def refresh_sms_token_view(request):
             # eager = refresh_sms_token.apply()
             ee = refresh_sms_token()
             # return redirect('Http://127.0.0.1:8000/admin/constance/config/')
-            return redirect('Http://185.211.57.73/admin/constance/config/' )
+            return redirect('Http://185.211.57.73/admin/constance/config/')
         except Exception as e:
             trace_back = traceback.format_exc()
             message = str(e) + "\n" + str(trace_back)
@@ -229,29 +232,27 @@ def refresh_sms_token_view(request):
             return HttpResponse(status=500)
 
 
-
-
 @api_view(['POST'])
 def get_childern_view_by_token(request):
     try:
         ranks = Ranks.objects.all()
     except Ranks.DoesNotExist:
-        return HttpResponse('جایگاهی تعریف نشده است.',status=500)
+        return HttpResponse('جایگاهی تعریف نشده است.', status=500)
     childern = {}
-    r =[]
+    r = []
     _parent_id = []
     try:
         if request.data.get('rank_name'):
-            _ranks =Ranks.objects._mptt_filter(rank_owner=request.user,rank_name = request.data.get('rank_name') )
+            _ranks = Ranks.objects._mptt_filter(rank_owner=request.user, rank_name=request.data.get('rank_name'))
         else:
-            _ranks =Ranks.objects._mptt_filter(rank_owner=request.user)
+            _ranks = Ranks.objects._mptt_filter(rank_owner=request.user)
     except Ranks.DoesNotExist:
-        return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
+        return HttpResponse('جایگاهی برای شما تعریف نشده است.', status=500)
     for _rank in _ranks:
         _parent_id.append(_rank.id)
 
     if _parent_id == []:
-        return HttpResponse('جایگاهی برای شما تعریف نشده است.',status=500)
+        return HttpResponse('جایگاهی برای شما تعریف نشده است.', status=500)
     else:
         for _rank in _ranks:
             childs = {}
@@ -272,14 +273,15 @@ def get_childern_view_by_token(request):
                                     # slug = slugify(title)
                                     # basename, file_extension = rank.rank_owner.image.split(".")
                                     # new_filename = "%s.%s" % (slug, file_extension)
-                                    child = {"rank_name":rank.rank_name,"id":rank.rank_owner.id,"first_name":rank.rank_owner.first_name,
-                                             "last_name":rank.rank_owner.last_name,"mobile":rank.rank_owner.mobile,
-                                             "is_legal":rank.rank_owner.is_legal,
+                                    child = {"rank_name": rank.rank_name, "id": rank.rank_owner.id,
+                                             "first_name": rank.rank_owner.first_name,
+                                             "last_name": rank.rank_owner.last_name, "mobile": rank.rank_owner.mobile,
+                                             "is_legal": rank.rank_owner.is_legal,
                                              # "pic":"http://185.211.57.73/static/uploads/%s" % (rank.rank_owner.image)
-                                                "pic" : pic
+                                             "pic": pic
                                              }
                                     r.append(child)
-                                    childs[rank.rank_name]=child
+                                    childs[rank.rank_name] = child
                                     child = {}
                             p = rank.id
                             if p in pids:
@@ -291,8 +293,8 @@ def get_childern_view_by_token(request):
             else:
                 _rank_ = Ranks.objects.get(rank_owner=request.user)
 
-            childern["جایگاه"]=_rank_.rank_name
-            childern["تعداد کل"]=len(r)
+            childern["جایگاه"] = _rank_.rank_name
+            childern["تعداد کل"] = len(r)
             childern["لیست"] = r
         t = 0
         for i in childern.values():
@@ -325,10 +327,9 @@ def get_childern_view_by_token(request):
 
 @api_view(['POST'])
 def get_place_by_owner(request):
-
     obj = []
     try:
-        places = Places.objects.filter(place_owner= request.user)
+        places = Places.objects.filter(place_owner=request.user)
         for place in places:
             obj.append(place)
         leads_as_json = serializers.serialize('json', obj)
@@ -336,13 +337,6 @@ def get_place_by_owner(request):
     except Places.DoesNotExist:
         places = None
         return HttpResponse("مکانی برای شما یافت نشد.")
-
-
-
-
-
-
-
 
 
 class RepViewSet(viewsets.ModelViewSet):
@@ -353,37 +347,35 @@ class RepViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             ppl_id = request.user.id
-            session_id = request.data.get('session_id' )
-            rep_ppl_id = Peoples.objects.get(id = request.data.get('rep_ppl'))
+            session_id = request.data.get('session_id')
+            rep_ppl_id = Peoples.objects.get(id=request.data.get('rep_ppl'))
             force = self.request.data.get('force')
         except:
             rep_ppl_id = None
             session_id = None
 
-
         intrposition = []
         myformat = '%Y-%m-%d %H:%M:%S'
-        session = Sessions.objects.get(id = session_id)
+        session = Sessions.objects.get(id=session_id)
         sdate = datetime.datetime.strptime(str(session.start_time), myformat).date()
         edate = datetime.datetime.strptime(str(session.end_time), myformat).date()
         stime = datetime.datetime.strptime(str(session.start_time), myformat).time()
         etime = datetime.datetime.strptime(str(session.end_time), myformat).time()
 
         try:
-            _sessions = Sessions.objects.filter(meeting_owner_id = ppl_id)
+            _sessions = Sessions.objects.filter(meeting_owner_id=ppl_id)
         except Sessions.DoesNotExist:
             _sessions = None
 
         try:
-            _audiences = Audiences.objects.filter(people_id = ppl_id)
+            _audiences = Audiences.objects.filter(people_id=ppl_id)
         except Audiences.DoesNotExist:
             _audiences = None
 
         try:
-            rep_audiences = Audiences.objects.filter(rep_ppl = ppl_id)
+            rep_audiences = Audiences.objects.filter(rep_ppl=ppl_id)
         except Audiences.DoesNotExist:
             rep_audiences = None
-
 
         for _session in _sessions:
             if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
@@ -401,18 +393,17 @@ class RepViewSet(viewsets.ModelViewSet):
                         _audience.session.meeting_title)
                     intrposition.append(a)
 
-
         for rep_audience in rep_audiences:
-            if str(rep_audience.session.start_time.date()) == str(sdate) or str(rep_audience.session.end_time.date()) == str(edate):
+            if str(rep_audience.session.start_time.date()) == str(sdate) or str(
+                    rep_audience.session.end_time.date()) == str(edate):
                 if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
                     r = {}
-                    r[str(rep_audience.rep_ppl.first_name)+" "+str(rep_audience.rep_ppl.last_name)] = str(
+                    r[str(rep_audience.rep_ppl.first_name) + " " + str(rep_audience.rep_ppl.last_name)] = str(
                         rep_audience.session.meeting_title)
                     intrposition.append(r)
 
-
         if intrposition != [] and force == 0:
-            return Response(', '.join(map(str, intrposition)) +  "تداخل با جلسه:")
+            return Response(', '.join(map(str, intrposition)) + "تداخل با جلسه:")
         else:
             if Audiences.objects.get(people=ppl_id, session=session_id):
                 obj = Audiences.objects.get(people=ppl_id, session=session_id)
@@ -422,13 +413,8 @@ class RepViewSet(viewsets.ModelViewSet):
                 return HttpResponse(leads_as_json, content_type='json')
 
 
-
-
-
-
-
 @api_view(['POST'])
-def  get_sessions_by_date(request):
+def get_sessions_by_date(request):
     # sdate = jalali.Persian(request.data.get('s_time')).gregorian_datetime()
     sdate = datetime.datetime.strptime(request.data.get('time'), "%Y-%m-%d")
     s_sessions = []
@@ -451,27 +437,43 @@ def  get_sessions_by_date(request):
     for _session in _sessions:
         stime = datetime.datetime.strptime(str(_session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
-                    s_sessions.append({"as owner":{'id':_session.id , 'meeting_title' : _session.meeting_title,
-                    'meeting_owner':str(_session.meeting_owner.first_name)+' '+str(_session.meeting_owner.last_name),
-                    'start_time': str(_session.start_time) , 'end_time' : str(_session.end_time)}})
+            s_sessions.append(
+                {
+                    'id': _session.id,
+                    'meeting_title': _session.meeting_title,
+                    'place_address': str(_session.place.place_address),
+                    'start_time': str(_session.start_time),
+                    'end_time': str(_session.end_time),
+                    'owner': True
+                }
+            )
 
     for _audience in ppl_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
-                    s_sessions.append({"as audience":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
-                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+' '+str(_audience.session.meeting_owner.last_name),
-                                       'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
-                                       'people' : str(_audience.people.first_name)+" "+str(_audience.people.last_name)}})
+            s_sessions.append(
+                {
+                    'id': _audience.session.id,
+                    'meeting_title': _audience.session.meeting_title,
+                    'place_address': str(_audience.session.place.place_address),
+                    'start_time': str(_audience.session.start_time),
+                    'end_time': str(_audience.session.end_time),
+                    'owner':False
+                }
+            )
 
     for _audience in rep_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
-                    s_sessions.append({"as replace":{'id':_audience.session.id , 'title' : _audience.session.meeting_title,
-                    'meeting_owner':str(_audience.session.meeting_owner.first_name)+' '+str(_audience.session.meeting_owner.last_name),
-                                       'start_time': str(_audience.session.start_time) ,'end_time' : str(_session.end_time),
-                                       'people' : str(_audience.rep_ppl.first_name)+" "+str(_audience.rep_ppl.last_name)}})
+            s_sessions.append({"as replace": {'id': _audience.session.id, 'title': _audience.session.meeting_title,
+                                              'meeting_owner': str(
+                                                  _audience.session.meeting_owner.first_name) + ' ' + str(
+                                                  _audience.session.meeting_owner.last_name),
+                                              'start_time': str(_audience.session.start_time),
+                                              'end_time': str(_session.end_time),
+                                              'people': str(_audience.rep_ppl.first_name) + " " + str(
+                                                  _audience.rep_ppl.last_name)}})
     return JsonResponse(s_sessions, safe=False)
-
 
 
 # class SessionidViewSet(viewsets.ModelViewSet):
@@ -496,10 +498,10 @@ def get_session_by_id(request):
     r = []
     session = []
     try:
-        _audiences = Audiences.objects.filter(session_id = request.data.get('id'))
+        _audiences = Audiences.objects.filter(session_id=request.data.get('id'))
     except Audiences.DoesNotExist:
         _audiences = None
-    i=1
+    i = 1
     for _audience in _audiences:
         rr = {}
         rr["id"] = _audience.people.id
@@ -509,7 +511,7 @@ def get_session_by_id(request):
         rr["is_legal"] = _audience.people.is_legal
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         r.append(rr)
-        i+=1
+        i += 1
     try:
         _session = Sessions.objects.get(id=request.data.get('id'))
     except Sessions.DoesNotExist:
@@ -525,6 +527,3 @@ def get_session_by_id(request):
         'people': r
     })
     return JsonResponse(session, safe=False)
-
-
-
