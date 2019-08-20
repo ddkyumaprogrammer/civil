@@ -266,7 +266,7 @@ def get_childern_view_by_token(request):
                                 if c in childs.keys():
                                     pass
                                 else:
-                                    pic = ("http://127.0.0.1:8001/static/uploads/%s" % rank.rank_owner.image)
+                                    pic = ("http://185.211.57.73/static/uploads/%s" % rank.rank_owner.image)
 
                                     # title = rank.rank_owner.first_name + " " + rank.rank_owner.last_name
                                     # slug = slugify(title)
@@ -507,7 +507,7 @@ def get_session_by_id(request):
         rr["last_name"] = _audience.people.last_name
         rr["mobile"] = _audience.people.mobile
         rr["is_legal"] = _audience.people.is_legal
-        rr["image"] = _audience.people.image
+        rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         r["No%s"%i] = rr
         i+=1
     try:
