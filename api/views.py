@@ -520,7 +520,7 @@ def get_session_by_id(request):
         'meeting_owner': str(_session.meeting_owner.first_name) + '-' + str(_session.meeting_owner.last_name),
         'start_time': str(_session.start_time),
         'end_time': str(_session.end_time),
-        'place_address': str(_session),
+        'place_address': _session.place,
         'people': r
     })
     return JsonResponse(session, safe=False)
