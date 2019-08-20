@@ -518,6 +518,7 @@ def get_session_by_id(request):
         'id': _session.id,
         'meeting_title': str(_session.meeting_title),
         'meeting_owner': str(_session.meeting_owner.first_name) + '-' + str(_session.meeting_owner.last_name),
+        'owner_image': "http://185.211.57.73/static/uploads/%s" % _session.meeting_owner.image,
         'start_time': str(_session.start_time),
         'end_time': str(_session.end_time),
         'place_address': str(_session.place.place_address),
