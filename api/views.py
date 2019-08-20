@@ -444,7 +444,7 @@ def get_sessions_by_date(request):
                     'place_address': str(_session.place.place_address),
                     'start_time': str(_session.start_time),
                     'end_time': str(_session.end_time),
-                    'image':str(_session.meeting_owner.image),
+                    'image':"http://185.211.57.73/static/uploads/%s" % str(_session.meeting_owner.image),
                     'owner': True
                 }
             )
