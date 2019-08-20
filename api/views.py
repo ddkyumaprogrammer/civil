@@ -493,7 +493,7 @@ def  get_sessions_by_date(request):
 
 @api_view(['POST'])
 def get_session_by_id(request):
-    r = {}
+    r = []
     session = []
     try:
         _audiences = Audiences.objects.filter(session_id = request.data.get('id'))
@@ -508,7 +508,7 @@ def get_session_by_id(request):
         rr["mobile"] = _audience.people.mobile
         rr["is_legal"] = _audience.people.is_legal
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
-        r["No%s"%i] = rr
+        r.append(rr)
         i+=1
     try:
         _session = Sessions.objects.get(id=request.data.get('id'))
