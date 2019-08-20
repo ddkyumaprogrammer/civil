@@ -514,10 +514,15 @@ def get_session_by_id(request):
         _session = Sessions.objects.get(id=request.data.get('id'))
     except Sessions.DoesNotExist:
         _session = None
-    session.append({'id': _session.id, 'meeting_title': str(_session.meeting_title),
-                    'meeting_owner': str(_session.meeting_owner.first_name) + '-' +
-                    str(_session.meeting_owner.last_name),'start_time': str(_session.start_time),
-                     'end_time': str(_session.end_time),'people': r})
+    session.append({
+        'id': _session.id,
+        'meeting_title': str(_session.meeting_title),
+        'meeting_owner': str(_session.meeting_owner.first_name) + '-' + str(_session.meeting_owner.last_name),
+        'start_time': str(_session.start_time),
+        'end_time': str(_session.end_time),
+        'place_address': str(_session.place.place_address),
+        'people': r
+    })
     return JsonResponse(session, safe=False)
 
 
