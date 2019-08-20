@@ -507,6 +507,7 @@ def get_session_by_id(request):
         rr["last_name"] = _audience.people.last_name
         rr["mobile"] = _audience.people.mobile
         rr["is_legal"] = _audience.people.is_legal
+        rr["image"] = _audience.people.image
         r["No%s"%i] = rr
         i+=1
     try:
