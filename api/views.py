@@ -2,7 +2,6 @@ import collections
 import datetime
 import json
 import traceback
-
 import jdatetime
 from django.shortcuts import redirect, get_object_or_404, render
 from rest_framework.decorators import api_view
@@ -16,7 +15,6 @@ from .serializers import *
 from django.forms.models import model_to_dict
 from meeting.models import *
 from django.core import serializers
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -167,6 +165,13 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def destroy(self, request, *args, **kwargs):
+        session = self.get_object()
+        session.delete()
+        return Response(data='delete success')
+
+
 
 
 class PeopleViewSet(viewsets.ModelViewSet):
