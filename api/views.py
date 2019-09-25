@@ -172,6 +172,8 @@ class SessionsViewSet(viewsets.ModelViewSet):
         return Response(data='delete success')
 
 
+
+
 class PeopleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Peoples.objects.all()
@@ -447,9 +449,8 @@ def get_sessions_by_date(request):
                     'place_address': str(_session.place.place_address),
                     'start_time': str(_session.start_time),
                     'end_time': str(_session.end_time),
-                    'image': "http://185.211.57.73/static/uploads/%s" % str(_session.meeting_owner.image),
+                    'image':"http://185.211.57.73/static/uploads/%s" % str(_session.meeting_owner.image),
                     'owner': True,
-                    'test': 'test'
                 }
             )
 
@@ -463,9 +464,8 @@ def get_sessions_by_date(request):
                     'place_address': str(_audience.session.place.place_address),
                     'start_time': str(_audience.session.start_time),
                     'end_time': str(_audience.session.end_time),
-                    'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
-                    'owner': False,
-                    'test': 'test'
+                    'image':"http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
+                    'owner':False
                 }
             )
 
