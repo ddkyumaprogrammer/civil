@@ -172,8 +172,6 @@ class SessionsViewSet(viewsets.ModelViewSet):
         return Response(data='delete success')
 
 
-
-
 class PeopleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Peoples.objects.all()
@@ -446,10 +444,10 @@ def get_sessions_by_date(request):
                 {
                     'id': _session.id,
                     'meeting_title': _session.meeting_title,
-                    'place_address': str(_session.place.place_address),
+                    'place_address': str(_session.address),
                     'start_time': str(_session.start_time),
                     'end_time': str(_session.end_time),
-                    'image':"http://185.211.57.73/static/uploads/%s" % str(_session.meeting_owner.image),
+                    'image': "http://185.211.57.73/static/uploads/%s" % str(_session.meeting_owner.image),
                     'owner': True,
                 }
             )
@@ -461,25 +459,27 @@ def get_sessions_by_date(request):
                 {
                     'id': _audience.session.id,
                     'meeting_title': _audience.session.meeting_title,
-                    'place_address': str(_audience.session.place.place_address),
+                    'place_address': str(_audience.session.address),
                     'start_time': str(_audience.session.start_time),
                     'end_time': str(_audience.session.end_time),
-                    'image':"http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
-                    'owner':False
+                    'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
+                    'owner': False
                 }
             )
 
     for _audience in rep_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
-            s_sessions.append({"as replace": {'id': _audience.session.id, 'title': _audience.session.meeting_title,
-                                              'meeting_owner': str(
-                                                  _audience.session.meeting_owner.first_name) + ' ' + str(
-                                                  _audience.session.meeting_owner.last_name),
-                                              'start_time': str(_audience.session.start_time),
-                                              'end_time': str(_session.end_time),
-                                              'people': str(_audience.rep_ppl.first_name) + " " + str(
-                                                  _audience.rep_ppl.last_name)}})
+            s_sessions.append({"as replace": {
+                'id': _audience.session.id,
+                'title': _audience.session.meeting_title,
+                'meeting_owner': str(
+                    _audience.session.meeting_owner.first_name) + ' ' + str(
+                    _audience.session.meeting_owner.last_name),
+                'start_time': str(_audience.session.start_time),
+                'end_time': str(_session.end_time),
+                'people': str(_audience.rep_ppl.first_name) + " " + str(
+                    _audience.rep_ppl.last_name)}})
     return JsonResponse(s_sessions, safe=False)
 
 
@@ -530,7 +530,7 @@ def get_session_by_id(request):
         'owner_image': "http://185.211.57.73/static/uploads/%s" % _session.meeting_owner.image,
         'start_time': str(_session.start_time),
         'end_time': str(_session.end_time),
-        'place_address': str(_session.place.place_address),
+        'place_address': str(_session.address),
         'people': r
     })
     return JsonResponse(session, safe=False)
