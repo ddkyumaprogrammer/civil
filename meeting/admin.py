@@ -99,8 +99,9 @@ class AudiencesInLine(admin.TabularInline):
 @admin.register(Sessions)
 class Sessionsadmin(admin.ModelAdmin):
     list_display = ('meeting_title','start_time','end_time','meeting_owner','place',
-                    '_audiences','address','Longitude','Latitude')
-    fields = ('meeting_title','meeting_owner',('start_time','end_time'),'place')
+                    '_audiences')
+    fields = ('meeting_title','meeting_owner',('start_time','end_time'),'place',
+              'address', 'Longitude', 'Latitude')
     ordering = ['start_time']
     search_fields = ['meeting_title','start_time','meeting_owner__last_name',]
     list_filter = (('start_time',JDateFieldListFilter),)
