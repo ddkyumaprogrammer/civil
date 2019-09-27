@@ -28,12 +28,15 @@ class Peoples(AbstractUser):
         verbose_name_plural = 'افراد'
 
     def _image(self):
-        name = self.first_name + " " + self.last_name
-        if self.image:
-            # return mark_safe('<img src="%s" style="object-fit:scale-down" width=180 height=240 alt="%s"/>'
-            #                  % (("http://127.0.0.1:8001/static/uploads/%s" % (self.image)),name))
-            return mark_safe('<img src="%s" width=150 height=200 alt="%s"/>'
-                         % (("http://185.211.57.73/static/uploads/%s" % (self.image)), name))
+        if self.first_name:
+            name = self.first_name + " " + self.last_name
+            if self.image:
+                # return mark_safe('<img src="%s" style="object-fit:scale-down" width=180 height=240 alt="%s"/>'
+                #                  % (("http://127.0.0.1:8001/static/uploads/%s" % (self.image)),name))
+                return mark_safe('<img src="%s" width=150 height=200 alt="%s"/>'
+                             % (("http://185.211.57.73/static/uploads/%s" % (self.image)), name))
+            else:
+                return "بدون عکس"
         else:
             return "بدون عکس"
     _image.short_description = 'عکس'
