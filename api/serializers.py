@@ -24,7 +24,8 @@ class PlaceSerializer(serializers.ModelSerializer):
 class SessionsSerializer(serializers.ModelSerializer):
     class Meta(PeopleSerializer.Meta):
         model = Sessions
-        fields = ('meeting_title','meeting_owner','start_time','end_time','place',)
+        fields = ('meeting_title','meeting_owner','start_time','end_time','place',
+              'address', 'Longitude', 'Latitude')
 
 
 class AudienceSerializer(PeopleSerializer,SessionsSerializer):
