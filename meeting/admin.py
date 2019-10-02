@@ -94,6 +94,7 @@ class AudiencesInLine(admin.TabularInline):
     model = Audiences
     raw_id_fields = ('people','rep_ppl')
     fields = ('people','sign_people','rep_ppl','sign_rep_ppl')
+    readonly_fields =('sign_people','sign_rep_ppl')
     extra = 1
     can_delete = True
 
