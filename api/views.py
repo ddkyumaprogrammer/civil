@@ -519,7 +519,7 @@ def get_session_by_id(request):
         try:
             rr["rep_first_name"] = _audience.rep_ppl.first_name
             rr["rep_last_name"] = _audience.rep_ppl.last_name
-            rr["sign"] = _audience.sign_rep_ppl
+            rr["rep_sign"] = _audience.sign_rep_ppl
             rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
         except:
             rr["rep_first_name"] = None
