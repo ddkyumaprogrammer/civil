@@ -514,17 +514,18 @@ def get_session_by_id(request):
         # rr["id"] = _audience.people.id
         rr["first_name"] = _audience.people.first_name
         rr["last_name"] = _audience.people.last_name
-        rr["sign"] = _audience.sign_people
+        rr["seen"] = _audience.seen_people
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         try:
             rr["rep_first_name"] = _audience.rep_ppl.first_name
             rr["rep_last_name"] = _audience.rep_ppl.last_name
-            rr["rep_sign"] = _audience.sign_rep_ppl
-            rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
+            rr["rep_seen"] = _audience.seen_rep_ppl
+            rr["rep_image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
         except:
             rr["rep_first_name"] = None
             rr["rep_last_name"] = None
-            rr["image"] = None
+            rr["rep_seen"] = False
+            rr["rep_image"] = None
         r.append(rr)
         i += 1
     try:
@@ -542,3 +543,6 @@ def get_session_by_id(request):
         'people': r
     })
     return JsonResponse(session, safe=False)
+
+
+
