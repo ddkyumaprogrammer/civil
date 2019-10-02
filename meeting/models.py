@@ -125,13 +125,14 @@ class Sessions (models.Model):
 
 
 class Audiences (models.Model):
-    people = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='حاضرین', related_name='people',
+    people = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='people',
                                   on_delete=models.SET_NULL)
+    sign_people = models.BooleanField(default=False, verbose_name="رویت فرد")
     session = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='session',
                                   on_delete=models.CASCADE)
     rep_ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='جایگزین', related_name='rep_ppl',
                                   on_delete=models.SET_NULL)
-
+    sign_rep_ppl = models.BooleanField(default=False, verbose_name="رویت جایگزین")
 
     class Meta:
         verbose_name = 'حاضرین'
