@@ -511,12 +511,20 @@ def get_session_by_id(request):
     i = 1
     for _audience in _audiences:
         rr = {}
-        rr["id"] = _audience.people.id
+        # rr["id"] = _audience.people.id
         rr["first_name"] = _audience.people.first_name
         rr["last_name"] = _audience.people.last_name
-        rr["mobile"] = _audience.people.mobile
-        rr["is_legal"] = _audience.people.is_legal
+        rr["sign"] = _audience.sign_people
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
+        try:
+            rr["rep_first_name"] = _audience.rep_ppl.first_name
+            rr["rep_last_name"] = _audience.rep_ppl.last_name
+            rr["sign"] = _audience.sign_rep_ppl
+            rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
+        except:
+            rr["rep_first_name"] = None
+            rr["rep_last_name"] = None
+            rr["image"] = None
         r.append(rr)
         i += 1
     try:
