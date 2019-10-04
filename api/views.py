@@ -549,7 +549,6 @@ def get_session_by_id(request):
 
 @api_view(['POST'])
 def seen_session_by_ppl(request):
-    token = request.auth.key
     session_id = request.data.get('session_id')
     _session = Sessions.objects.get(pk=session_id)
     _audiences = Audiences.objects.filter(session=_session)
@@ -560,7 +559,7 @@ def seen_session_by_ppl(request):
     obj = []
     try:
         # _token = Token.objects.get(key = token)
-        _ppl = request.auth.user
+        _ppl = request.user
         for _audience in _audiences:
             if _ppl == _audience.people:
                 _seen.s_people = True
