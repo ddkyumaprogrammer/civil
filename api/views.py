@@ -572,10 +572,10 @@ def seen_session_by_ppl(request):
         _audience.save()
     obj = []
     obj.append({
-        'session': str(_audience.session),
-        'ppl': str(_audience.people.first_name) + '-' + str(_audience.people.last_name),
+        'session': str(_audience.session.meeting_title),
+        'ppl': str(_audience.people.first_name) + ' ' + str(_audience.people.last_name),
         'seen_ppl': str(_audience.seen.s_people),
-        'rep_ppl': str(_audience.rep_ppl.first_name) + '-' + str(_audience.rep_ppl.last_name),
+        'rep_ppl': str(_audience.rep_ppl.first_name) + ' ' + str(_audience.rep_ppl.last_name),
         'seen_rep_ppl': str(_audience.seen.s_rep_ppl),
     })
     return JsonResponse(obj, safe=False)
