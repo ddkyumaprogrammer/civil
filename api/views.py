@@ -17,6 +17,8 @@ from meeting.models import *
 from django.core import serializers
 import logging
 
+from rest_framework.authtoken.models import *
+
 logger = logging.getLogger(__name__)
 
 
@@ -547,37 +549,44 @@ def get_session_by_id(request):
 
 @api_view(['POST'])
 def seen_session_by_ppl(request):
-    ppl_id = request.data.get('ppl_id')
-    _ppl = Peoples.objects.get(pk=ppl_id)
+    token = request.auth.key
     session_id = request.data.get('session_id')
     _session = Sessions.objects.get(pk=session_id)
+    _audiences = Audiences.objects.filter(session=_session)
     try:
         _seen = Seens.objects.get(id=session_id)
     except:
         _seen = Seens.objects.create(id=session_id)
-    try:
-        rep_ppl_id = request.data.get('rep_ppl_id')
-        _rep_ppl = Peoples.objects.get(pk = rep_ppl_id)
-        _audience = Audiences.objects.get(session = _session, people = _ppl, rep_ppl = _rep_ppl )
-        _seen.s_people = True
-        _seen.s_rep_ppl = True
-        _seen.save()
-        _audience.seen = _seen
-        _audience.save()
-    except:
-        _audience = Audiences.objects.get(session = _session, people = _ppl )
-        _seen.s_people = True
-        _seen.save()
-        _audience.seen = _seen
-        _audience.save()
     obj = []
-    obj.append({
-        'session': str(_audience.session.meeting_title),
-        'ppl': str(_audience.people.first_name) + ' ' + str(_audience.people.last_name),
-        'seen_ppl': str(_audience.seen.s_people),
-        'rep_ppl': str(_audience.rep_ppl.first_name) + ' ' + str(_audience.rep_ppl.last_name),
-        'seen_rep_ppl': str(_audience.seen.s_rep_ppl),
-    })
+    try:
+        # _token = Token.objects.get(key = token)
+        _ppl = request.auth.user
+        for _audience in _audiences:
+            if _ppl == _audience.people:
+                _seen.s_people = True
+                _seen.save()
+                _audience.seen = _seen
+                _audience.save()
+                obj.append({
+                    'session': str(_audience.session.meeting_title),
+                    'ppl': str(_audience.people.first_name) + ' ' + str(_audience.people.last_name),
+                    'seen_ppl': str(_audience.seen.s_people),
+                })
+                break
+        for _audience in _audiences:
+            if _ppl == _audience.rep_ppl:
+                _seen.s_rep_ppl = True
+                _seen.save()
+                _audience.seen = _seen
+                _audience.save()
+                obj.append({
+                    'session': str(_audience.session.meeting_title),
+                    'rep_ppl': str(_audience.rep_ppl.first_name) + ' ' + str(_audience.rep_ppl.last_name),
+                    'seen_rep_ppl': str(_audience.seen.s_rep_ppl),
+                })
+                break
+    except:
+        return HttpResponse("فردی با این مشخصات موجود نیست.")
     return JsonResponse(obj, safe=False)
 
 
