@@ -386,7 +386,7 @@ class RepViewSet(viewsets.ModelViewSet):
             if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
                 if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
                     s = {}
-                    s[str(_session.meeting_owner.first_name) + ' ' + str(_session.meeting_owner.last_name)] = str(
+                    s["تشکیل دهنده"] = str(
                         _session.meeting_title)
                     intrposition.append(s)
         for _audience in _audiences:
@@ -394,7 +394,7 @@ class RepViewSet(viewsets.ModelViewSet):
                     edate):
                 if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
                     a = {}
-                    a[str(_audience.people.first_name) + " " + str(_audience.people.last_name)] = str(
+                    a["دعوت شده"] = str(
                         _audience.session.meeting_title)
                     intrposition.append(a)
 
@@ -403,7 +403,7 @@ class RepViewSet(viewsets.ModelViewSet):
                     rep_audience.session.end_time.date()) == str(edate):
                 if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
                     r = {}
-                    r[str(rep_audience.rep_ppl.first_name) + " " + str(rep_audience.rep_ppl.last_name)] = str(
+                    r["جایگزین"] = str(
                         rep_audience.session.meeting_title)
                     intrposition.append(r)
 
