@@ -152,17 +152,19 @@ class SessionsViewSet(viewsets.ModelViewSet):
                     audiences = request.data.get('audiences')
                     for audience in audiences:
                         try:
+                            sessn = Sessions.objects.get(id=obj.id).id
+                        except Sessions.DoesNotExist:
+                            sessn = None
+                        try:
                             ppl = Peoples.objects.get(mobile=audience.get('people')).id
+                            Seens.objects.create(ppl_id=ppl, sesion_id=sessn)
                         except Peoples.DoesNotExist:
                             ppl = None
                         try:
                             rppl = Peoples.objects.get(mobile=audience.get('rep_ppl')).id
+                            Seens.objects.create(ppl_id=rppl, sesion_id= sessn )
                         except Peoples.DoesNotExist:
                             rppl = None
-                        try:
-                            sessn = Sessions.objects.get(id=obj.id).id
-                        except Sessions.DoesNotExist:
-                            sessn = None
                         Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
 
                 headers = self.get_success_headers(serializer.data)
@@ -517,12 +519,12 @@ def get_session_by_id(request):
         # rr["id"] = _audience.people.id
         rr["first_name"] = _audience.people.first_name
         rr["last_name"] = _audience.people.last_name
-        rr["seen"] = _audience.seen.s_people
+        rr["seen"] = Seens.objects.get(ppl_id = _audience.people.id, sesion_id = session_id).s_people
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         try:
             rr["rep_first_name"] = _audience.rep_ppl.first_name
             rr["rep_last_name"] = _audience.rep_ppl.last_name
-            rr["rep_seen"] = _audience.seen.s_rep_ppl
+            rr["rep_seen"] = Seens.objects.get(ppl_id = _audience.rep_ppl.id, sesion_id = session_id).s_rep_ppl
             rr["rep_image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
         except:
             rr["rep_first_name"] = None
@@ -553,11 +555,10 @@ def seen_session_by_ppl(request):
     session_id = request.data.get('session_id')
     _session = Sessions.objects.get(pk=session_id)
     _audiences = Audiences.objects.filter(session=_session)
-    _seen = Seens.objects.get(id=session_id)
+    _ppl = request.user
+    _seen = Seens.objects.get(ppl = _ppl, sesion =_session)
     obj = []
     try:
-        # _token = Token.objects.get(key = token)
-        _ppl = request.user
         for _audience in _audiences:
             if _ppl == _audience.people:
                 _seen.s_people = True

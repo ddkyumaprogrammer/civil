@@ -124,16 +124,25 @@ class Sessions (models.Model):
 class Seens (models.Model):
     s_rep_ppl = models.BooleanField(default=False, verbose_name="رویت جایگزین")
     s_people = models.BooleanField(default=False, verbose_name="رویت فرد")
+    ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='ppl',
+                                  on_delete=models.SET_NULL)
+    sesion = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='sesion',
+                                  on_delete=models.CASCADE)
     class Meta:
         verbose_name = 'رویت'
         verbose_name_plural = 'رویت ها'
+        unique_together = ('sesion', 'ppl',)
+    def __str__(self):
+        return '{} {} in {}'.format(self.ppl.first_name, self.ppl.last_name, self.sesion.meeting_title)
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save()
+        return
 
 class Audiences (models.Model):
     people = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='people',
                                   on_delete=models.SET_NULL)
-    seen = models.ForeignKey(Seens,null=True, blank=True, verbose_name="رویت",related_name='seen',
-                             on_delete=models.SET_NULL)
     session = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='session',
                                   on_delete=models.CASCADE)
     rep_ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='جایگزین', related_name='rep_ppl',
@@ -148,11 +157,6 @@ class Audiences (models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        try:
-            _seen = Seens.objects.get(id=self.session.id)
-        except:
-            _seen = Seens.objects.create(id=self.session.id)
-        self.seen = _seen
         super().save()
         return
 #
