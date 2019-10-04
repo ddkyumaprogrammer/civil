@@ -519,12 +519,12 @@ def get_session_by_id(request):
         # rr["id"] = _audience.people.id
         rr["first_name"] = _audience.people.first_name
         rr["last_name"] = _audience.people.last_name
-        rr["seen"] = Seens.objects.get(ppl_id = _audience.people.id, sesion_id = session_id).s_people
+        rr["seen"] = Seens.objects.get(ppl_id = _audience.people.id, sesion_id = session_id).seen
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         try:
             rr["rep_first_name"] = _audience.rep_ppl.first_name
             rr["rep_last_name"] = _audience.rep_ppl.last_name
-            rr["rep_seen"] = Seens.objects.get(ppl_id = _audience.rep_ppl.id, sesion_id = session_id).s_rep_ppl
+            rr["rep_seen"] = Seens.objects.get(ppl_id = _audience.rep_ppl.id, sesion_id = session_id).seen
             rr["rep_image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
         except:
             rr["rep_first_name"] = None
@@ -554,37 +554,16 @@ def get_session_by_id(request):
 def seen_session_by_ppl(request):
     session_id = request.data.get('session_id')
     _session = Sessions.objects.get(pk=session_id)
-    _audiences = Audiences.objects.filter(session=_session)
     _ppl = request.user
     _seen = Seens.objects.get(ppl = _ppl, sesion =_session)
     obj = []
-    try:
-        for _audience in _audiences:
-            if _ppl == _audience.people:
-                _seen.s_people = True
-                _seen.save()
-                _audience.seen = _seen
-                _audience.save()
-                obj.append({
-                    'session': str(_audience.session.meeting_title),
-                    'ppl': str(_audience.people.first_name) + ' ' + str(_audience.people.last_name),
-                    'seen_ppl': str(_audience.seen.s_people),
-                })
-                break
-        for _audience in _audiences:
-            if _ppl == _audience.rep_ppl:
-                _seen.s_rep_ppl = True
-                _seen.save()
-                _audience.seen = _seen
-                _audience.save()
-                obj.append({
-                    'session': str(_audience.session.meeting_title),
-                    'rep_ppl': str(_audience.rep_ppl.first_name) + ' ' + str(_audience.rep_ppl.last_name),
-                    'seen_rep_ppl': str(_audience.seen.s_rep_ppl),
-                })
-                break
-    except:
-        return HttpResponse("فردی با این مشخصات موجود نیست.")
+    _seen.seen = True
+    _seen.save()
+    obj.append({
+        'session': str(_session.meeting_title),
+        'ppl': str(_ppl.first_name) + ' ' + str(_ppl.last_name),
+        'seen': str(_seen.seen),
+    })
     return JsonResponse(obj, safe=False)
 
 

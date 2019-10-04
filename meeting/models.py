@@ -122,8 +122,7 @@ class Sessions (models.Model):
         return '{}'.format(self.meeting_title)
 
 class Seens (models.Model):
-    s_rep_ppl = models.BooleanField(default=False, verbose_name="رویت جایگزین")
-    s_people = models.BooleanField(default=False, verbose_name="رویت فرد")
+    seen = models.BooleanField(default=False, verbose_name="رویت")
     ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='ppl',
                                   on_delete=models.SET_NULL)
     sesion = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='sesion',

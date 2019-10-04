@@ -100,12 +100,12 @@ class AudiencesInLine(admin.TabularInline):
     def seen_people(self, obj):
         _session = obj.session.id
         _ppl = obj.people.id
-        _seen = Seens.objects.get(ppl_id=_ppl, sesion_id = _session).s_people
+        _seen = Seens.objects.get(ppl_id=_ppl, sesion_id = _session).seen
         return _seen
     def seen_rep_ppl(self, obj):
         _session = obj.session.id
         _rep_ppl = obj.rep_ppl.id
-        _seen = Seens.objects.get(ppl_id=_rep_ppl, sesion_id = _session).s_rep_ppl
+        _seen = Seens.objects.get(ppl_id=_rep_ppl, sesion_id = _session).seen
         return _seen
     seen_people.short_description = 'رویت فرد'
     seen_rep_ppl.short_description = 'رویت جایگزین'
