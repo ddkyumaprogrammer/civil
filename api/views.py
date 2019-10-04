@@ -514,12 +514,12 @@ def get_session_by_id(request):
         # rr["id"] = _audience.people.id
         rr["first_name"] = _audience.people.first_name
         rr["last_name"] = _audience.people.last_name
-        rr["seen"] = _audience.seen_people
+        rr["seen"] = _audience.seen.s_people
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         try:
             rr["rep_first_name"] = _audience.rep_ppl.first_name
             rr["rep_last_name"] = _audience.rep_ppl.last_name
-            rr["rep_seen"] = _audience.seen_rep_ppl
+            rr["rep_seen"] = _audience.seen.s_rep_ppl
             rr["rep_image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
         except:
             rr["rep_first_name"] = None
