@@ -148,6 +148,11 @@ class Audiences (models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        try:
+            _seen = Seens.objects.get(id=self.session.id)
+        except:
+            _seen = Seens.objects.create(id=self.session.id)
+        self.seen = _seen
         super().save()
         return
 #
