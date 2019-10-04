@@ -121,18 +121,23 @@ class Sessions (models.Model):
     def __str__(self):
         return '{}'.format(self.meeting_title)
 
-
+class Seens (models.Model):
+    s_rep_ppl = models.BooleanField(default=False, verbose_name="رویت جایگزین")
+    s_people = models.BooleanField(default=False, verbose_name="رویت فرد")
+    class Meta:
+        verbose_name = 'رویت'
+        verbose_name_plural = 'رویت ها'
 
 
 class Audiences (models.Model):
     people = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='people',
                                   on_delete=models.SET_NULL)
-    seen_people = models.BooleanField(default=False, verbose_name="رویت فرد")
+    seen = models.ForeignKey(Seens,null=True, blank=True, verbose_name="رویت",related_name='seen',
+                             on_delete=models.SET_NULL)
     session = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='session',
                                   on_delete=models.CASCADE)
     rep_ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='جایگزین', related_name='rep_ppl',
                                   on_delete=models.SET_NULL)
-    seen_rep_ppl = models.BooleanField(default=False, verbose_name="رویت جایگزین")
 
     class Meta:
         verbose_name = 'حاضرین'
@@ -145,3 +150,4 @@ class Audiences (models.Model):
              update_fields=None):
         super().save()
         return
+#

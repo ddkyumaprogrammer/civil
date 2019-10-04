@@ -97,6 +97,12 @@ class AudiencesInLine(admin.TabularInline):
     readonly_fields =('seen_people','seen_rep_ppl')
     extra = 1
     can_delete = True
+    def seen_people(self, obj):
+        return obj.seen.s_people
+    def seen_rep_ppl(self, obj):
+        return obj.seen.s_rep_ppl
+    seen_people.short_description = 'رویت فرد'
+    seen_rep_ppl.short_description = 'رویت جایگزین'
 
 @admin.register(Sessions)
 class Sessionsadmin(admin.ModelAdmin):

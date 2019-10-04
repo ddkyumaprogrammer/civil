@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'get-sessions-by-date/',get_sessions_by_date),
     url(r'session-by-id/', get_session_by_id),
     url(r'place-by-owner/', get_place_by_owner),
+    url(r'seen-session-by-ppl/', seen_session_by_ppl),
 ]
 
 urlpatterns += router.urls
