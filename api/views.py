@@ -368,17 +368,17 @@ class RepViewSet(viewsets.ModelViewSet):
         etime = datetime.datetime.strptime(str(session.end_time), myformat).time()
 
         try:
-            _sessions = Sessions.objects.filter(meeting_owner_id=ppl_id)
+            _sessions = Sessions.objects.filter(meeting_owner_id=rep_ppl_id)
         except Sessions.DoesNotExist:
             _sessions = None
 
         try:
-            _audiences = Audiences.objects.filter(people_id=ppl_id)
+            _audiences = Audiences.objects.filter(people_id=rep_ppl_id)
         except Audiences.DoesNotExist:
             _audiences = None
 
         try:
-            rep_audiences = Audiences.objects.filter(rep_ppl=ppl_id)
+            rep_audiences = Audiences.objects.filter(rep_ppl=rep_ppl_id)
         except Audiences.DoesNotExist:
             rep_audiences = None
 
