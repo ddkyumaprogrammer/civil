@@ -506,8 +506,14 @@ def get_sessions_by_date(request):
 def get_session_by_id(request):
     r = []
     session = []
+    session_id = request.data.get('id')
     try:
-        _audiences = Audiences.objects.filter(session_id=request.data.get('id'))
+        _seen = Seens.objects.get(id=session_id)
+    except:
+        _seen = Seens.objects.create(id=session_id)
+    _seen.save()
+    try:
+        _audiences = Audiences.objects.filter(session_id=session_id)
     except Audiences.DoesNotExist:
         _audiences = None
     i = 1
