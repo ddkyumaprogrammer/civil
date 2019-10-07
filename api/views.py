@@ -478,9 +478,7 @@ def get_sessions_by_date(request):
             s_sessions.append({
                 'id': _audience.session.id,
                 'meeting_title': _audience.session.meeting_title,
-                'owner': str(
-                    _audience.session.meeting_owner.first_name) + ' ' + str(
-                    _audience.session.meeting_owner.last_name),
+                'owner': False,
                 'start_time': str(_audience.session.start_time),
                 'end_time': str(_session.end_time),
                 'place_address': str(_audience.session.address),
