@@ -477,14 +477,15 @@ def get_sessions_by_date(request):
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
             s_sessions.append({
                 'id': _audience.session.id,
-                'title': _audience.session.meeting_title,
-                'meeting_owner': str(
+                'meeting_title': _audience.session.meeting_title,
+                'owner': str(
                     _audience.session.meeting_owner.first_name) + ' ' + str(
                     _audience.session.meeting_owner.last_name),
                 'start_time': str(_audience.session.start_time),
                 'end_time': str(_session.end_time),
-                'people': str(_audience.rep_ppl.first_name) + " " + str(
-                    _audience.rep_ppl.last_name)})
+                'place_address': str(_audience.session.address),
+                'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
+            })
     return JsonResponse(s_sessions, safe=False)
 
 
