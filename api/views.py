@@ -475,7 +475,7 @@ def get_sessions_by_date(request):
     for _audience in rep_audiences:
         stime = datetime.datetime.strptime(str(_audience.session.start_time), myformat).date()
         if stime.year == sdate.year and stime.month == sdate.month and stime.day == sdate.day:
-            s_sessions.append({"as replace": {
+            s_sessions.append({
                 'id': _audience.session.id,
                 'title': _audience.session.meeting_title,
                 'meeting_owner': str(
@@ -484,7 +484,7 @@ def get_sessions_by_date(request):
                 'start_time': str(_audience.session.start_time),
                 'end_time': str(_session.end_time),
                 'people': str(_audience.rep_ppl.first_name) + " " + str(
-                    _audience.rep_ppl.last_name)}})
+                    _audience.rep_ppl.last_name)})
     return JsonResponse(s_sessions, safe=False)
 
 
