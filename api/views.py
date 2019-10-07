@@ -416,6 +416,7 @@ class RepViewSet(viewsets.ModelViewSet):
                 obj = Audiences.objects.get(people=ppl_id, session=session_id)
                 obj.rep_ppl = rep_ppl_id
                 obj.save()
+                Seens.objects.create(ppl_id=rep_ppl_id, sesion_id=session_id)
                 leads_as_json = serializers.serialize('json', [obj, ])
                 return HttpResponse(leads_as_json, content_type='json')
 
