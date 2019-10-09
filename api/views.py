@@ -349,7 +349,7 @@ def get_place_by_owner(request):
 def set_fcm_token(request):
     try:
         people = Peoples.objects.get(id=request.user.id)
-        people.fcm_token = request.POST['fcm_token']
+        people.fcm_token = request.POST.get('fcm_token','null')
         people.save()
     except Places.DoesNotExist:
         return HttpResponse("خطا در ثبت  توکن")
