@@ -347,9 +347,8 @@ def get_place_by_owner(request):
 
 @api_view(['POST'])
 def set_fcm_token(request):
-    obj = []
     try:
-        people = Peoples.objects.get(id=request.user)
+        people = Peoples.objects.get(request.user)
         people.fcm_token = request.POST['fcm_token']
         people.save()
     except Places.DoesNotExist:
