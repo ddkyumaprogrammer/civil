@@ -351,6 +351,7 @@ def set_fcm_token(request):
         people = Peoples.objects.get(id=request.user.id)
         people.fcm_token = request.POST.get('fcm_token','null')
         people.save()
+        return HttpResponse("{success:true}")
     except Places.DoesNotExist:
         return HttpResponse("خطا در ثبت  توکن")
 
