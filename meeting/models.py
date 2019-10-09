@@ -17,6 +17,7 @@ class Peoples(AbstractUser):
     mobile = models.CharField(unique=True, max_length=14, null=True, blank=True, verbose_name='موبایل')
     first_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='نام')
     last_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='نام خانوادگی')
+    fcm_token = models.CharField(max_length=200, null=True, blank=True, verbose_name='توکن')
     mobile_verified = models.BooleanField(default=False, verbose_name='موبایل تأیید شده')
     is_legal = models.BooleanField(default=True, verbose_name='شخصیت حقوقی')
     image = models.ImageField(null=True, blank=True,verbose_name='انتخاب عکس', upload_to=get_image_path)

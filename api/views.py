@@ -345,6 +345,15 @@ def get_place_by_owner(request):
         places = None
         return HttpResponse("مکانی برای شما یافت نشد.")
 
+@api_view(['POST'])
+def set_fcm_token(request):
+    obj = []
+    try:
+        people = Peoples.objects.get(id=request.user)
+        people.fcm_token = request.POST['fcm_token']
+        people.save()
+    except Places.DoesNotExist:
+        return HttpResponse("خطا در ثبت  توکن")
 
 class RepViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
