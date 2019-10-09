@@ -68,7 +68,7 @@ class Peoplesadmin(admin.ModelAdmin):
     list_display = ('_peoples','mobile','is_legal','_places')
     fieldsets =(
                 (None,{
-                     'fields':(('first_name','last_name'),('mobile','is_legal'),('image','_image'))
+                     'fields':(('first_name','last_name'),('mobile','is_legal','fcm_token'),('image','_image'))
                 }),
                 ('بیشتر', {
                             'classes': ('collapse',),
