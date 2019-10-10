@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'place-by-owner/', get_place_by_owner),
     url(r'seen-session-by-ppl/', seen_session_by_ppl),
     url(r'set_fcm_token/', set_fcm_token),
+    url(r'call_fcm/', call_fcm),
 ]
 
 urlpatterns += router.urls
