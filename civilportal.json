@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "civilportal-1549702250468",
+  "private_key_id": "c31b6d005efbe8e3e4a4f41073be354183ad0502",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDafsd8nk5Px/n2\n/o2LEWryaOsBHVf8RjpmV/cHng7ERp2CIcDtM4pMRJcccLlZzDrJ03BR2X9uLR/C\nZu63T/xrOaDLtcSpgtf+vym7ADXqKb1emWUbMMdj4g9Vefry/1NVGnGgj6OnQ7F3\nJrmu5ocGw8djv1GcilHIsDZ1Qy/Iw+p3GbAJPN+lQHyfvfHxskit+G21Yxjiz38f\nyuXMz4zp+UW3MBzfSUd89xOTqxeu2wMEuGi9o0yjpZtdXfVS8QHAIx3uHo3WCEgR\nRiN7jE/klYOmCeWYtgmgjaVLKimo/0q+Mw93kD0fRpgsGSNAj7Bcgn7hulpsQOAu\nPavnt5+xAgMBAAECggEACyN9bffwDBcowhO2CYnoxtTcbiEd1CmMXp1LZaMEI7Np\n4jFwUWdYPI0emv+QI2jK8nEJ/9Izsd0xCksPDl9QgfLdJKVukimuczkxmmvnU7mv\nAryVL+6rq4bhuzzNs0ea6vK/Ki1IbYWA7Y8W1jjAV3Lxnj8pnO5cPvvkutOjAvwJ\ntZK56QcCwptciznpj7xtttnqo/CDCaABYSnJq2iPLnRoXRbc1vE69TJcNQryS0yg\n2Saaev/EYOdZu1sOEHUQnxUPoKcheo5CTvlvUN2U7PUhlUmEpuvBL33qzlBlW/AK\ntRk5fvoN0iEVpeaJQEd7ekBMCsoVbz8IrSvOE7clZQKBgQD71sTCdmUsfSoRTh6T\nMlNT1WQNMMCOTwTDrBREh97U1Ehzj8ovv+HQctZuP38wXeKqzILgEDj0FFVSe1E+\nZNdYKzG2EpWIo6AmiG7wG9WwGGKNIe4Oh0LoWenlpoE4N1jVCglT30mN8sLuXzEU\n0JXiShgIVu/cFVIioNC3UIkNkwKBgQDeGvkYgHV8BEuCB/O/x7lC53kPsOlriME7\nBIT9lf2fkGWXHZKuE4WplBpBTczJpOEKKCj+8DZduAWHH7+FssiWpPtP+Q3MmJD7\nW6b7al82Zg4kYbJpFFSMh8MQnebNtjKhwG2TbbUw9eOJY8O5oQkSXTfK0lkSvApB\nGYiY/DtIKwKBgEQK7BCKgp15l+MjEzm8EC2Ha0fxEyWgDe58UOGPQFKKpKSshflO\nw8lZLbyN5WSBCVwSc43sdCbmU4M8lF/iSRimWwERlltbskqW9Dplmt/ARuhQ8Yv1\nWcuDd6G30hQJSDQPSSPjIXF71NUo3Q79qHGCiWm/a4EwNYfroVjWJqGHAoGBAL1a\nn518/yxw+PLt1qhdHRvl/fcbq5UrLRoku0D63BRqZcIUy1WvfRfbFRsxufL7p4Qi\nQvk+UAtMdSIDNiRFDPApzbwbp+ES/R/evpi/0latYUcxJ4qgc4ivweTrybb9q2Lt\njD3RnVUVfRxHurkKipJmeMdo19m6CMABhcxv1harAoGAAlRAis3NnPjL8Qk8sJjx\noT9FnhyRuW951/75IyonMSZiW92R1rHdOOm1qPZBRpUNNPUYXJYpEmW8JKgsFrtM\nVXSnPD7rZm0H0f5XDj8ld5659CVfLqo6ir/JmEyO7l1Ors5QvTMItacLLWsQNppi\nGZCSNQW/OjX6Wdp8YCJVtzI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-7tc7l@civilportal-1549702250468.iam.gserviceaccount.com",
+  "client_id": "101774075287699309989",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-7tc7l%40civilportal-1549702250468.iam.gserviceaccount.com"
+}

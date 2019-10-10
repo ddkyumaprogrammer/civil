@@ -356,6 +356,29 @@ def set_fcm_token(request):
     except Places.DoesNotExist:
         return HttpResponse("خطا در ثبت  توکن")
 
+@api_view(['POST'])
+def call_fcm(request):
+    import firebase_admin
+    from firebase_admin import credentials, messaging
+    from json import JSONEncoder
+
+    cred = credentials.Certificate('/opt/w/civil/civilportal.json')
+    try:
+        default_app = firebase_admin.initialize_app(cred)
+    except Exception as e:
+        print(e)
+    _user = User.objects.get(id=request.user.id)
+    token = _user.fcm_token
+    message = messaging.Message(
+        data={
+            "messageFrom": "Vouch!",
+            "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
+        },
+        token=token,
+    )
+    response = messaging.send(message)
+    return JsonResponse({'token': token, 'response': response}, encoder=JSONEncoder)
+
 class RepViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Audiences.objects.all()
