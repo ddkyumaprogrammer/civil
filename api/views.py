@@ -367,7 +367,7 @@ def call_fcm(request):
         default_app = firebase_admin.initialize_app(cred)
     except Exception as e:
         print(e)
-    _user = User.objects.get(id=request.user.id)
+    _user = Peoples.objects.get(id=request.user.id)
     token = _user.fcm_token
     message = messaging.Message(
         data={
