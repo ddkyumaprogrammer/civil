@@ -100,8 +100,6 @@ class Ranks(MPTTModel):
     # def get_absolute_url(self):
     #     return reverse('meeting', kwargs={'path': self.get_path()})
 
-
-
 class Sessions (models.Model):
     meeting_title = models.CharField(max_length=50, null=True, blank=True, verbose_name='عنوان')
     meeting_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='برگزارکننده',related_name='meeting_owner',

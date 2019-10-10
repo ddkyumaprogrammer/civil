@@ -167,6 +167,33 @@ class SessionsViewSet(viewsets.ModelViewSet):
                             rppl = None
                         Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
 
+                        import firebase_admin
+                        from firebase_admin import credentials, messaging
+                        from json import JSONEncoder
+                        cred = credentials.Certificate('/opt/w/civil/civilportal.json')
+                        try:
+                            default_app = firebase_admin.initialize_app(cred)
+                        except Exception as e:
+                            print(e)
+                        if ppl is not None:
+                            token = ppl.fcm_token
+                            message = messaging.Message(
+                                data={
+                                    "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
+                                },
+                                token=token,
+                            )
+                            messaging.send(message)
+                        if rppl is not None:
+                            token = rppl.fcm_token
+                            message = messaging.Message(
+                                data={
+                                    "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
+                                },
+                                token=token,
+                            )
+                            messaging.send(message)
+
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -313,23 +340,6 @@ def get_childern_view_by_token(request):
             return HttpResponse('شما زیردستی ندارید.', status=500)
         else:
             return JsonResponse(childern, safe=False)
-
-
-# class PlaceViewSet(viewsets.ModelViewSet):
-#     permission_classes = (IsAuthenticated,)
-#     queryset = Places.objects.all()
-#     serializer_class = PlaceSerializer
-#
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-#         queryset = queryset.filter(place_owner=self.request.user)
-#         page = self.paginate_queryset(queryset)
-#         if page is not None:
-#             serializer = PlaceSerializer(page, many=True)
-#             return self.get_paginated_response(serializer.data)
-#
-#         serializer = PlaceSerializer(queryset, many=True)
-#         return Response(serializer.data)
 
 
 @api_view(['POST'])
@@ -519,24 +529,6 @@ def get_sessions_by_date(request):
             })
     return JsonResponse(s_sessions, safe=False)
 
-
-# class SessionidViewSet(viewsets.ModelViewSet):
-#     permission_classes = (IsAuthenticated,)
-#     queryset = Sessions.objects.all()
-#     serializer_class = SessionsSerializer
-#
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-#         queryset = queryset.filter(meeting_owner=self.request.user)
-#         queryset = queryset.filter(id=self.request.data.get('id'))
-#         page = self.paginate_queryset(queryset)
-#         if page is not None:
-#             serializer = SessionsSerializer(page, many=True)
-#             return self.get_paginated_response(serializer.data)
-#
-#         serializer = SessionsSerializer(queryset, many=True)
-#         return Response(serializer.data)
-
 @api_view(['POST'])
 def get_session_by_id(request):
     r = []
@@ -581,7 +573,6 @@ def get_session_by_id(request):
         'people': r
     })
     return JsonResponse(session, safe=False)
-
 
 @api_view(['POST'])
 def seen_session_by_ppl(request):
