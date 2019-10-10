@@ -177,22 +177,24 @@ class SessionsViewSet(viewsets.ModelViewSet):
                             print(e)
                         if ppl is not None:
                             token = ppl.fcm_token
-                            message = messaging.Message(
-                                data={
-                                    "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
-                                },
-                                token=token,
-                            )
-                            messaging.send(message)
+                            if token is not None:
+                                message = messaging.Message(
+                                    data={
+                                        "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
+                                    },
+                                    token=token,
+                                )
+                                # messaging.send(message)
                         if rppl is not None:
                             token = rppl.fcm_token
-                            message = messaging.Message(
-                                data={
-                                    "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
-                                },
-                                token=token,
-                            )
-                            messaging.send(message)
+                            if token is not None:
+                                message = messaging.Message(
+                                    data={
+                                        "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
+                                    },
+                                    token=token,
+                                )
+                                # messaging.send(message)
 
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -381,6 +383,7 @@ def call_fcm(request):
     token = _user.fcm_token
     message = messaging.Message(
         data={
+            "messageFrom": "Vouch!",
             "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
         },
         token=token,
