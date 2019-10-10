@@ -381,7 +381,6 @@ def call_fcm(request):
     token = _user.fcm_token
     message = messaging.Message(
         data={
-            "messageFrom": "Vouch!",
             "body": "برای شما در تاریخ 15 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
         },
         token=token,
