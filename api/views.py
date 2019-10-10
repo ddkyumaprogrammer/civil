@@ -156,16 +156,16 @@ class SessionsViewSet(viewsets.ModelViewSet):
                         except Sessions.DoesNotExist:
                             sessn = None
                         try:
-                            ppl = Peoples.objects.get(mobile=audience.get('people')).id
-                            Seens.objects.create(ppl_id=ppl, sesion_id=sessn)
+                            ppl = Peoples.objects.get(mobile=audience.get('people'))
+                            Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
                         except Peoples.DoesNotExist:
                             ppl = None
                         try:
-                            rppl = Peoples.objects.get(mobile=audience.get('rep_ppl')).id
-                            Seens.objects.create(ppl_id=rppl, sesion_id= sessn )
+                            rppl = Peoples.objects.get(mobile=audience.get('rep_ppl'))
+                            Seens.objects.create(ppl_id=rppl.id, sesion_id= sessn )
                         except Peoples.DoesNotExist:
                             rppl = None
-                        Audiences.objects.create(session_id=sessn, people_id=ppl, rep_ppl_id=rppl)
+                        Audiences.objects.create(session_id=sessn, people_id=ppl.id, rep_ppl_id=rppl.id)
 
                         import firebase_admin
                         from firebase_admin import credentials, messaging
