@@ -173,21 +173,21 @@ class SessionsViewSet(viewsets.ModelViewSet):
                         cred = credentials.Certificate('/opt/w/civil/civilportal.json')
                         #     cred = credentials.Certificate('civilportal.json')
 
-                            try:
-                                default_app = firebase_admin.initialize_app(cred)
-                            except Exception as e:
-                                print(e)
-                            if ppl is not None:
-                                token = ppl.fcm_token
-                                if token is not None:
-                                    mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(sdate,stime)
-                                    message = messaging.Message(
-                                        data={
-                                            "body": mess
-                                        },
-                                        token=token,
-                                    )
-                                    messaging.send(message)
+                        try:
+                            default_app = firebase_admin.initialize_app(cred)
+                        except Exception as e:
+                            print(e)
+                        if ppl is not None:
+                            token = ppl.fcm_token
+                            if token is not None:
+                                mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(sdate,stime)
+                                message = messaging.Message(
+                                    data={
+                                        "body": mess
+                                    },
+                                    token=token,
+                                )
+                                messaging.send(message)
 
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
