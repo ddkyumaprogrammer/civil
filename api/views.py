@@ -149,7 +149,7 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 # obj.meeting_owner = request.user
                 # obj.save()
                 if 'audiences' in request.data:
-                    audiences = request.data.get('audiences')[0].values()
+                    audiences = request.data.get('audiences')
                     for audience in audiences:
                         for i in audience:
                             try:
