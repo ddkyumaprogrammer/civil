@@ -151,16 +151,15 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 if 'audiences' in request.data:
                     audiences = request.data.get('audiences')
                     for audience in audiences:
-                        for i in audience:
-                            try:
-                                sessn = Sessions.objects.get(id=obj.id).id
-                            except Sessions.DoesNotExist:
-                                sessn = None
-                            try:
-                                ppl = Peoples.objects.get(mobile=i)
-                                Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
-                            except Peoples.DoesNotExist:
-                                ppl = None
+                        try:
+                            sessn = Sessions.objects.get(id=obj.id).id
+                        except Sessions.DoesNotExist:
+                            sessn = None
+                        try:
+                            ppl = Peoples.objects.get(mobile=audience.get('people'))
+                            Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
+                        except Peoples.DoesNotExist:
+                            ppl = None
                         # try:
                         #     rppl = Peoples.objects.get(mobile=audience.get('rep_ppl'))
                         #     Seens.objects.create(ppl_id=rppl.id, sesion_id= sessn )
