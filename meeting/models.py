@@ -151,7 +151,7 @@ class Audiences (models.Model):
         verbose_name_plural = 'حاضرین'
 
     def __str__(self):
-        return '{} {}'.format(self.people.first_name, self.people.last_name)
+        return '{} {}'
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
