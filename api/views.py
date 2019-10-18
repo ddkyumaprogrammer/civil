@@ -150,6 +150,15 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 # obj.save()
                 if 'audiences' in request.data:
                     audiences = request.data.get('audiences')
+                    try:
+                        sessn = Sessions.objects.get(id=obj.id).id
+                    except Sessions.DoesNotExist:
+                        sessn = None
+                    try:
+                        ppl = Peoples.objects.get(id=request.user.id)
+                        Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn, seen=True)
+                    except Peoples.DoesNotExist:
+                        ppl = None
                     for audience in audiences:
                         try:
                             sessn = Sessions.objects.get(id=obj.id).id
@@ -160,18 +169,10 @@ class SessionsViewSet(viewsets.ModelViewSet):
                             Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
                         except Peoples.DoesNotExist:
                             ppl = None
-                        # try:
-                        #     rppl = Peoples.objects.get(mobile=audience.get('rep_ppl'))
-                        #     Seens.objects.create(ppl_id=rppl.id, sesion_id= sessn )
-                        # except Peoples.DoesNotExist:
-                        #     rppl = None
-                        # Audiences.objects.create(session_id=sessn, people_id=ppl.id, rep_ppl_id=rppl.id)
+
                         Audiences.objects.create(session_id=sessn, people=ppl)
 
-
                         cred = credentials.Certificate('/opt/w/civil/civilportal.json')
-                        #     cred = credentials.Certificate('civilportal.json')
-
                         try:
                             default_app = firebase_admin.initialize_app(cred)
                         except Exception as e:
