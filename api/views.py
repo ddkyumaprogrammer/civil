@@ -159,6 +159,8 @@ class SessionsViewSet(viewsets.ModelViewSet):
                         Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn, seen=True)
                     except Peoples.DoesNotExist:
                         ppl = None
+                        Audiences.objects.create(session_id=sessn, people=ppl)
+
                     for audience in audiences:
                         try:
                             sessn = Sessions.objects.get(id=obj.id).id
@@ -169,7 +171,6 @@ class SessionsViewSet(viewsets.ModelViewSet):
                             Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
                         except Peoples.DoesNotExist:
                             ppl = None
-
                         Audiences.objects.create(session_id=sessn, people=ppl)
 
                         cred = credentials.Certificate('/opt/w/civil/civilportal.json')
