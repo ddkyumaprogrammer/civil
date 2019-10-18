@@ -457,7 +457,9 @@ class RepViewSet(viewsets.ModelViewSet):
                 obj = Audiences.objects.get(people=ppl_id, session=session_id)
                 obj.rep_ppl = _rep_ppl
                 obj.save()
-                if Seens.objects.get(ppl_id=_rep_ppl.id, sesion_id=session_id) is None:
+                try:
+                    Seens.objects.get(ppl_id=_rep_ppl.id, sesion_id=session_id)
+                except Seens.DoesNotExist:
                     Seens.objects.create(ppl_id=_rep_ppl.id, sesion_id=session_id)
 
                 cred = credentials.Certificate('/opt/w/civil/civilportal.json')
