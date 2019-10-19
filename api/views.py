@@ -531,7 +531,8 @@ def get_sessions_by_date(request):
                     'start_time': str(_audience.session.start_time),
                     'end_time': str(_audience.session.end_time),
                     'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
-                    'owner': False
+                    'owner': False,
+                    'replace': False
                 }
             )
 
@@ -542,6 +543,7 @@ def get_sessions_by_date(request):
                 'id': _audience.session.id,
                 'meeting_title': _audience.session.meeting_title,
                 'owner': False,
+                'replace': True,
                 'start_time': str(_audience.session.start_time),
                 'end_time': str(_session.end_time),
                 'place_address': str(_audience.session.address),
