@@ -190,7 +190,7 @@ class SessionsViewSet(viewsets.ModelViewSet):
                                 )
                                 try:
                                     messaging.send(message)
-                                except messaging.ApiCallError:
+                                except Exception as e:
                                     print('Messaging Error')
 
                 headers = self.get_success_headers(serializer.data)
@@ -479,7 +479,7 @@ class RepViewSet(viewsets.ModelViewSet):
                         )
                         try:
                             messaging.send(message)
-                        except messaging.ApiCallError:
+                        except Exception as e:
                             print('Messaging Error')
                 leads_as_json = serializers.serialize('json', [obj, ])
                 return HttpResponse(leads_as_json, content_type='json')
