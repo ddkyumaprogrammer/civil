@@ -188,7 +188,10 @@ class SessionsViewSet(viewsets.ModelViewSet):
                                     },
                                     token=token,
                                 )
-                                messaging.send(message)
+                                try:
+                                    messaging.send(message)
+                                except messaging.ApiCallError:
+                                    print('Messaging Error')
 
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -364,12 +367,7 @@ def set_fcm_token(request):
 
 @api_view(['POST'])
 def call_fcm(request):
-    import firebase_admin
-    from firebase_admin import credentials, messaging
-    from json import JSONEncoder
-
     cred = credentials.Certificate('/opt/w/civil/civilportal.json')
-    # cred = credentials.Certificate('civilportal.json')
 
     try:
         default_app = firebase_admin.initialize_app(cred)
@@ -479,7 +477,10 @@ class RepViewSet(viewsets.ModelViewSet):
                             },
                             token=token,
                         )
-                        messaging.send(message)
+                        try:
+                            messaging.send(message)
+                        except messaging.ApiCallError:
+                            print('Messaging Error')
                 leads_as_json = serializers.serialize('json', [obj, ])
                 return HttpResponse(leads_as_json, content_type='json')
 
