@@ -109,8 +109,8 @@ class Sessions (models.Model):
     place = models.ForeignKey(Places,null=True, blank=True, verbose_name='محل تشکیل', related_name='place',
                                   on_delete=models.SET_NULL)
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name='آدرس')
-    Longitude = models.DecimalField(max_digits=30, decimal_places=6, null=True, blank=True, verbose_name='طول جغرافیای')
-    Latitude = models.DecimalField(max_digits=30, decimal_places=6, null=True, blank=True, verbose_name='عرض جغرافیای ')
+    Longitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True, verbose_name='طول جغرافیای')
+    Latitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True, verbose_name='عرض جغرافیای ')
 
     class Meta:
         verbose_name = 'جلسه'
