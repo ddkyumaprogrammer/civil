@@ -149,17 +149,23 @@ class SessionsViewSet(viewsets.ModelViewSet):
                 # obj.meeting_owner = request.user
                 # obj.save()
                 if 'audiences' in request.data:
+
+                    # adding audiences to session
                     audiences = request.data.get('audiences')
                     try:
                         sessn = Sessions.objects.get(id=obj.id).id
                     except Sessions.DoesNotExist:
                         sessn = None
-                    try:
-                        ppl = Peoples.objects.get(id=request.user.id)
-                        Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn, seen=True)
-                    except Peoples.DoesNotExist:
-                        ppl = None
-                    Audiences.objects.create(session_id=sessn, people=ppl)
+
+                    # see if owner is added and add him manually
+                    # otherwise just ignore him
+                    if request.data.get('selfPresent'):
+                        try:
+                            ppl = Peoples.objects.get(id=request.user.id)
+                            Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn, seen=True)
+                        except Peoples.DoesNotExist:
+                            ppl = None
+                        Audiences.objects.create(session_id=sessn, people=ppl)
 
                     for audience in audiences:
                         try:
