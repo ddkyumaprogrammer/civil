@@ -187,7 +187,8 @@ class SessionsViewSet(viewsets.ModelViewSet):
                         if ppl is not None:
                             token = ppl.fcm_token
                             if token is not None:
-                                mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(sdate,stime)
+                                mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(
+                                    sdate, stime)
                                 message = messaging.Message(
                                     data={
                                         "body": mess
@@ -360,6 +361,7 @@ def get_place_by_owner(request):
         places = None
         return HttpResponse("مکانی برای شما یافت نشد.")
 
+
 @api_view(['POST'])
 def set_fcm_token(request):
     try:
@@ -370,6 +372,7 @@ def set_fcm_token(request):
         return JsonResponse({'status': 'ok', }, encoder=JSONEncoder)
     except Places.DoesNotExist:
         return HttpResponse("خطا در ثبت  توکن")
+
 
 @api_view(['POST'])
 def call_fcm(request):
@@ -390,6 +393,7 @@ def call_fcm(request):
     )
     response = messaging.send(message)
     return JsonResponse({'token': token, 'response': response}, encoder=JSONEncoder)
+
 
 class RepViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -558,6 +562,7 @@ def get_sessions_by_date(request):
             })
     return JsonResponse(s_sessions, safe=False)
 
+
 @api_view(['POST'])
 def get_session_by_id(request):
     r = []
@@ -573,12 +578,12 @@ def get_session_by_id(request):
         # rr["id"] = _audience.people.id
         rr["first_name"] = _audience.people.first_name
         rr["last_name"] = _audience.people.last_name
-        rr["seen"] = Seens.objects.get(ppl_id = _audience.people.id, sesion_id = session_id).seen
+        rr["seen"] = Seens.objects.get(ppl_id=_audience.people.id, sesion_id=session_id).seen
         rr["image"] = "http://185.211.57.73/static/uploads/%s" % _audience.people.image
         try:
             rr["rep_first_name"] = _audience.rep_ppl.first_name
             rr["rep_last_name"] = _audience.rep_ppl.last_name
-            rr["rep_seen"] = Seens.objects.get(ppl_id = _audience.rep_ppl.id, sesion_id = session_id).seen
+            rr["rep_seen"] = Seens.objects.get(ppl_id=_audience.rep_ppl.id, sesion_id=session_id).seen
             rr["rep_image"] = "http://185.211.57.73/static/uploads/%s" % _audience.rep_ppl.image
         except:
             rr["rep_first_name"] = None
@@ -598,17 +603,20 @@ def get_session_by_id(request):
         'owner_image': "http://185.211.57.73/static/uploads/%s" % _session.meeting_owner.image,
         'start_time': str(_session.start_time),
         'end_time': str(_session.end_time),
+        'lat': _session.Latitude,
+        'lng': _session.Longitude,
         'place_address': str(_session.address),
         'people': r
     })
     return JsonResponse(session, safe=False)
+
 
 @api_view(['POST'])
 def seen_session_by_ppl(request):
     session_id = request.data.get('session_id')
     _session = Sessions.objects.get(pk=session_id)
     _ppl = request.user
-    _seen = Seens.objects.get(ppl = _ppl, sesion =_session)
+    _seen = Seens.objects.get(ppl=_ppl, sesion=_session)
     obj = []
     _seen.seen = True
     _seen.save()
@@ -618,7 +626,3 @@ def seen_session_by_ppl(request):
         'seen': str(_seen.seen),
     })
     return JsonResponse(obj, safe=False)
-
-
-
-
