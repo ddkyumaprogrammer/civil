@@ -556,7 +556,7 @@ def get_sessions_by_date(request):
                 'owner': False,
                 'replace': True,
                 'start_time': str(_audience.session.start_time),
-                'end_time': str(_session.end_time),
+                'end_time': str(_audience.session.end_time),
                 'place_address': str(_audience.session.address),
                 'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
             })
