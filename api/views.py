@@ -145,6 +145,8 @@ class SessionsViewSet(viewsets.ModelViewSet):
         else:
             if serializer.is_valid(raise_exception=True):
                 obj = serializer.save(meeting_owner=request.user)
+                obj.created_time = datetime.now()
+                obj.save()
                 # obj = Sessions.objects.get(meeting_title=request.data.get('title'))
                 # obj.meeting_owner = request.user
                 # obj.save()

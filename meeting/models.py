@@ -111,6 +111,7 @@ class Sessions (models.Model):
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name='آدرس')
     Longitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True, verbose_name='طول جغرافیای')
     Latitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True, verbose_name='عرض جغرافیای ')
+    created_time = jmodels.jDateTimeField(null=True, verbose_name='زمان ثبت جلسه')
 
     class Meta:
         verbose_name = 'جلسه'
