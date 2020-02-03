@@ -528,6 +528,7 @@ def get_sessions_by_date(request):
                     'place_address': str(_session.address),
                     'start_time': str(_session.start_time),
                     'end_time': str(_session.end_time),
+                    'created_time': str(_session.created_time),
                     'image': "http://185.211.57.73/static/uploads/%s" % str(_session.meeting_owner.image),
                     'owner': True,
                 }
@@ -543,6 +544,7 @@ def get_sessions_by_date(request):
                     'place_address': str(_audience.session.address),
                     'start_time': str(_audience.session.start_time),
                     'end_time': str(_audience.session.end_time),
+                    'created_time': str(_audience.session.created_time),
                     'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
                     'owner': False,
                     'replace': False
@@ -559,6 +561,7 @@ def get_sessions_by_date(request):
                 'replace': True,
                 'start_time': str(_audience.session.start_time),
                 'end_time': str(_audience.session.end_time),
+                'created_time': str(_audience.session.created_time),
                 'place_address': str(_audience.session.address),
                 'image': "http://185.211.57.73/static/uploads/%s" % str(_audience.session.meeting_owner.image),
             })
