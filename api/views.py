@@ -252,8 +252,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
             obj.save()
         for place in places:
             Places.objects.create(place_owner=obj, **place)
-        leads_as_json = serializers.serialize('json', [obj, ])
-        leads_as_json['item'] = 'data'
+        leads_as_json = serializers.serialize('json', [obj, {'item': 'data'}])
         return HttpResponse(leads_as_json, content_type='json')
         # return JsonResponse([obj.first_name,obj.last_name,obj.is_legal], safe=False)
         # return JsonResponse ({'status':'ok',},encoder=JSONEncoder)
