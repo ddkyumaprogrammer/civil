@@ -225,10 +225,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = PeopleSerializer(queryset, many=True)
-        newdict = {'item': "test"}
-        newdict.update(serializer.data)
-        newdict['item'] = 'data'
-        return Response(newdict)
+        return Response(serializer)
 
     def create(self, request, *args, **kwargs):
         _id = request.user.id
@@ -256,6 +253,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
         for place in places:
             Places.objects.create(place_owner=obj, **place)
         leads_as_json = serializers.serialize('json', [obj, ])
+        leads_as_json['item'] = 'data'
         return HttpResponse(leads_as_json, content_type='json')
         # return JsonResponse([obj.first_name,obj.last_name,obj.is_legal], safe=False)
         # return JsonResponse ({'status':'ok',},encoder=JSONEncoder)
