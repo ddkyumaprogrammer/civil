@@ -225,7 +225,9 @@ class PeopleViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = PeopleSerializer(queryset, many=True)
-        return Response(serializer.data)
+        newdict = {'item': "test"}
+        newdict.update(serializer.data)
+        return Response(newdict)
 
     def create(self, request, *args, **kwargs):
         _id = request.user.id
