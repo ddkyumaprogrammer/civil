@@ -227,6 +227,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
         serializer = PeopleSerializer(queryset, many=True)
         newdict = {'item': "test"}
         newdict.update(serializer.data)
+        newdict['item'] = 'data'
         return Response(newdict)
 
     def create(self, request, *args, **kwargs):
