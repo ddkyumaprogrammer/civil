@@ -277,8 +277,14 @@ def refresh_sms_token_view(request):
 @api_view(['GET'])
 def get_self_rank(request):
     _ranks = Ranks.objects._mptt_filter(rank_owner=request.user)
-    leads_as_json = serializers.serialize('json', _ranks)
-    return JsonResponse(leads_as_json, safe=False)
+    obj = Peoples.objects.get(id=request.user.id)
+    response = \
+        {"first_name": obj.first_name,
+         "last_name": obj.last_name,
+         "image": "http://185.211.57.73/static/uploads/%s" % obj.image,
+         "rank": _ranks[0].fields.rank_name}
+    return JsonResponse(response, safe=False)
+
 
 @api_view(['POST'])
 def get_childern_view_by_token(request):
