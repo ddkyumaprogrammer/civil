@@ -252,7 +252,7 @@ class PeopleViewSet(viewsets.ModelViewSet):
             obj.save()
         for place in places:
             Places.objects.create(place_owner=obj, **place)
-        leads_as_json = serializers.serialize('json', [obj, {'item': 'data'}])
+        leads_as_json = serializers.serialize('json', [obj, ])
         return HttpResponse(leads_as_json, content_type='json')
         # return JsonResponse([obj.first_name,obj.last_name,obj.is_legal], safe=False)
         # return JsonResponse ({'status':'ok',},encoder=JSONEncoder)
@@ -273,6 +273,11 @@ def refresh_sms_token_view(request):
             logger.debug("ERROR:\n%s" % message)
             return HttpResponse(status=500)
 
+
+@api_view(['GET'])
+def get_self_rank(request):
+    _ranks = Ranks.objects._mptt_filter(rank_owner=request.user)
+    return JsonResponse(_ranks, safe=False)
 
 @api_view(['POST'])
 def get_childern_view_by_token(request):
