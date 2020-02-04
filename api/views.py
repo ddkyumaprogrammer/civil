@@ -281,6 +281,7 @@ def get_self_rank(request):
     response = \
         {"first_name": obj.first_name,
          "last_name": obj.last_name,
+         "mobile": obj.mobile,
          "image": "http://185.211.57.73/static/uploads/%s" % obj.image,
          "rank": _ranks[0].rank_name}
     return JsonResponse(response, safe=False)
