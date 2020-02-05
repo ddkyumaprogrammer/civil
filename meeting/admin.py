@@ -36,7 +36,7 @@ admin.site.register(Ranks,
     list_display_links=(
         'indented_title',
     ),
-    raw_id_fields = ('rank_owner', 'parent'
+    raw_id_fields = ('rank_owner', 'parent','extra_parent'
                      ),
 )
 # MPTT_ADMIN_LEVEL_INDENT = 20
