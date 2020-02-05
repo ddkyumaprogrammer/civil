@@ -56,7 +56,6 @@ class Peoples(AbstractUser):
         super().save()
         return
 
-
 class Places(models.Model):
     place_title = models.CharField(max_length=50,null=True, blank=True, verbose_name='نام ')
     Longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True,blank=True,verbose_name='طول جغرافیای')
@@ -72,13 +71,14 @@ class Places(models.Model):
     def __str__(self):
         return '{}'.format(self.place_title)
 
-
 class Ranks(MPTTModel):
     rank_name = models.CharField(null=True,max_length=50, verbose_name='نام جایگاه')
     rank_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='صاحب جایگاه',related_name='rank_owner',
                                   on_delete=models.CASCADE)
     parent = TreeForeignKey('self',  null=True, blank=True,verbose_name='جایگاه بالا دستی',related_name='childern',
                             db_index=True,on_delete=models.CASCADE)
+    extra_parent = TreeForeignKey('self', null=True, blank=True, verbose_name='جایگاه 2', related_name='childern',
+                            db_index=True, on_delete=models.CASCADE)
 
 
     class MPTTMeta:
