@@ -87,6 +87,8 @@ class Ranks(MPTTModel):
                             db_index=True, on_delete=models.CASCADE)
     extra_parent = TreeForeignKey('self', null=True, blank=True, verbose_name='جایگاه 2', related_name='extra_children',
                                   db_index=True, on_delete=models.CASCADE)
+    blocked_users = models.ManyToManyField('self', blank=True, null=True, verbose_name='سایر',
+                                           related_name='extra_users')
 
     class MPTTMeta:
         level_attr = 'mptt_level'
