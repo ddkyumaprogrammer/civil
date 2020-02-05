@@ -20,7 +20,7 @@ class Peoples(AbstractUser):
     fcm_token = models.CharField(max_length=200, null=True, blank=True, verbose_name='توکن')
     mobile_verified = models.BooleanField(default=False, verbose_name='موبایل تأیید شده')
     is_legal = models.BooleanField(default=True, verbose_name='شخصیت حقوقی')
-    image = models.ImageField(null=True, blank=True,verbose_name='انتخاب عکس', upload_to=get_image_path)
+    image = models.ImageField(null=True, blank=True, verbose_name='انتخاب عکس', upload_to=get_image_path)
     description = models.TextField(null=True, blank=True, verbose_name='توضیحات')
     MOBILE_FIELD = 'mobile'
 
@@ -35,17 +35,20 @@ class Peoples(AbstractUser):
                 # return mark_safe('<img src="%s" style="object-fit:scale-down" width=180 height=240 alt="%s"/>'
                 #                  % (("http://127.0.0.1:8001/static/uploads/%s" % (self.image)),name))
                 return mark_safe('<img src="%s" width=150 height=200 alt="%s"/>'
-                             % (("http://185.211.57.73/static/uploads/%s" % (self.image)), name))
+                                 % (("http://185.211.57.73/static/uploads/%s" % (self.image)), name))
             else:
                 return "بدون عکس"
         else:
             return "بدون عکس"
+
     _image.short_description = 'عکس'
     _image.allow_tags = True
 
     def _peoples(self):
         return '{} {}'.format(self.first_name, self.last_name)
+
     _peoples.short_description = 'نام'
+
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
@@ -56,13 +59,15 @@ class Peoples(AbstractUser):
         super().save()
         return
 
+
 class Places(models.Model):
-    place_title = models.CharField(max_length=50,null=True, blank=True, verbose_name='نام ')
-    Longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True,blank=True,verbose_name='طول جغرافیای')
-    Latitude = models.DecimalField(max_digits=9, decimal_places=6,null=True,blank=True,verbose_name='عرض جغرافیای ')
+    place_title = models.CharField(max_length=50, null=True, blank=True, verbose_name='نام ')
+    Longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name='طول جغرافیای')
+    Latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name='عرض جغرافیای ')
     place_address = models.TextField(null=True, blank=True, verbose_name='آدرس')
-    place_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name=' صاحب محل',related_name='place_owner',
-                                  on_delete=models.CASCADE)
+    place_owner = models.ForeignKey(Peoples, null=True, blank=True, verbose_name=' صاحب محل',
+                                    related_name='place_owner',
+                                    on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'محل'
@@ -71,15 +76,17 @@ class Places(models.Model):
     def __str__(self):
         return '{}'.format(self.place_title)
 
-class Ranks(MPTTModel):
-    rank_name = models.CharField(null=True,max_length=50, verbose_name='نام جایگاه')
-    rank_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='صاحب جایگاه',related_name='rank_owner',
-                                  on_delete=models.CASCADE)
-    parent = TreeForeignKey('self',  null=True, blank=True,verbose_name='جایگاه بالا دستی',related_name='childern',
-                            db_index=True,on_delete=models.CASCADE)
-    extra_parent = TreeForeignKey('self', null=True, blank=True, verbose_name='جایگاه 2', related_name='extra_children',
-                            db_index=True, on_delete=models.CASCADE)
 
+class Ranks(MPTTModel):
+    rank_name = models.CharField(null=True, max_length=50, verbose_name='نام جایگاه')
+    rank_owner = models.ForeignKey(Peoples, null=True, blank=True, verbose_name='صاحب جایگاه',
+                                   related_name='rank_owner',
+                                   on_delete=models.CASCADE)
+    secretary = models.BooleanField(null=False, default=False, verbose_name='دفتردار')
+    parent = TreeForeignKey('self', null=True, blank=True, verbose_name='جایگاه بالا دستی', related_name='childern',
+                            db_index=True, on_delete=models.CASCADE)
+    extra_parent = TreeForeignKey('self', null=True, blank=True, verbose_name='جایگاه 2', related_name='extra_children',
+                                  db_index=True, on_delete=models.CASCADE)
 
     class MPTTMeta:
         level_attr = 'mptt_level'
@@ -95,22 +102,27 @@ class Ranks(MPTTModel):
 
     def delete(self):
         super(Ranks, self).delete()
+
     delete.alters_data = True
 
     # def get_absolute_url(self):
     #     return reverse('meeting', kwargs={'path': self.get_path()})
 
-class Sessions (models.Model):
+
+class Sessions(models.Model):
     meeting_title = models.CharField(max_length=50, null=True, blank=True, verbose_name='عنوان')
-    meeting_owner = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='برگزارکننده',related_name='meeting_owner',
-                                  on_delete=models.CASCADE)
+    meeting_owner = models.ForeignKey(Peoples, null=True, blank=True, verbose_name='برگزارکننده',
+                                      related_name='meeting_owner',
+                                      on_delete=models.CASCADE)
     start_time = jmodels.jDateTimeField(verbose_name='زمان شورع')
     end_time = jmodels.jDateTimeField(verbose_name='زمان خاتمه')
-    place = models.ForeignKey(Places,null=True, blank=True, verbose_name='محل تشکیل', related_name='place',
-                                  on_delete=models.SET_NULL)
+    place = models.ForeignKey(Places, null=True, blank=True, verbose_name='محل تشکیل', related_name='place',
+                              on_delete=models.SET_NULL)
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name='آدرس')
-    Longitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True, verbose_name='طول جغرافیای')
-    Latitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True, verbose_name='عرض جغرافیای ')
+    Longitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True,
+                                    verbose_name='طول جغرافیای')
+    Latitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True,
+                                   verbose_name='عرض جغرافیای ')
     created_time = jmodels.jDateTimeField(null=True, verbose_name='زمان ثبت جلسه')
 
     class Meta:
@@ -121,16 +133,19 @@ class Sessions (models.Model):
     def __str__(self):
         return '{}'.format(self.meeting_title)
 
-class Seens (models.Model):
+
+class Seens(models.Model):
     seen = models.BooleanField(default=False, verbose_name="رویت")
-    ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='ppl',
-                                  on_delete=models.SET_NULL)
-    sesion = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='sesion',
-                                  on_delete=models.CASCADE)
+    ppl = models.ForeignKey(Peoples, null=True, blank=True, verbose_name='دعوت شده', related_name='ppl',
+                            on_delete=models.SET_NULL)
+    sesion = models.ForeignKey(Sessions, null=True, blank=True, verbose_name='عنوان جلسه', related_name='sesion',
+                               on_delete=models.CASCADE)
+
     class Meta:
         verbose_name = 'رویت'
         verbose_name_plural = 'رویت ها'
         unique_together = ('sesion', 'ppl',)
+
     def __str__(self):
         return '{} {} in {}'.format(self.ppl.first_name, self.ppl.last_name, self.sesion.meeting_title)
 
@@ -139,13 +154,14 @@ class Seens (models.Model):
         super().save()
         return
 
-class Audiences (models.Model):
-    people = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='دعوت شده', related_name='people',
-                                  on_delete=models.SET_NULL)
-    session = models.ForeignKey(Sessions,null=True, blank=True, verbose_name='عنوان جلسه',related_name='session',
-                                  on_delete=models.CASCADE)
-    rep_ppl = models.ForeignKey(Peoples,null=True, blank=True, verbose_name='جایگزین', related_name='rep_ppl',
-                                  on_delete=models.SET_NULL)
+
+class Audiences(models.Model):
+    people = models.ForeignKey(Peoples, null=True, blank=True, verbose_name='دعوت شده', related_name='people',
+                               on_delete=models.SET_NULL)
+    session = models.ForeignKey(Sessions, null=True, blank=True, verbose_name='عنوان جلسه', related_name='session',
+                                on_delete=models.CASCADE)
+    rep_ppl = models.ForeignKey(Peoples, null=True, blank=True, verbose_name='جایگزین', related_name='rep_ppl',
+                                on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = 'حاضرین'
