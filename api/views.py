@@ -195,6 +195,7 @@ class SessionsViewSet(viewsets.ModelViewSet):
                                     data={
                                         "body": mess
                                     },
+                                    android={"priority": "high"},
                                     token=token,
                                 )
                                 try:
@@ -404,6 +405,7 @@ def call_fcm(request):
             "messageFrom": "Vouch!",
             "body": "برای شما در تاریخ 18 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
         },
+        android={"priority": "high"},
         token=token,
     )
     response = messaging.send(message)
@@ -500,6 +502,7 @@ class RepViewSet(viewsets.ModelViewSet):
                             data={
                                 "body": mess
                             },
+                            android={"priority": "high"},
                             token=token,
                         )
                         try:
