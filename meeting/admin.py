@@ -28,9 +28,6 @@ admin.site.register(Ranks,
         'indented_title',
         # 'rank_name',
         'rank_owner',
-        'parent',
-        'secretary',
-        'extra_parent',
 
         # ...more fields if you feel like it...
     ),
