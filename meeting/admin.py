@@ -37,7 +37,6 @@ admin.site.register(Ranks,
 
         # ...more fields if you feel like it...
     ),
-    exclude=('blocked_users'),
     list_display_links=(
         'indented_title',
     ),
