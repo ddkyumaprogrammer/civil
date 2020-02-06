@@ -21,6 +21,11 @@ class MyDraggableMPTTAdmin(DraggableMPTTAdmin):
         )
     something.short_description = ('something nice')
 
+class RanksInLine(admin.TabularInline):
+    model = Ranks
+    extra = 1
+    can_delete = True
+
 admin.site.register(Ranks,
     DraggableMPTTAdmin,
     list_display=(
@@ -36,6 +41,7 @@ admin.site.register(Ranks,
     ),
     raw_id_fields = ('rank_owner', 'parent','extra_parent'
                      ),
+    inlines=[RanksInLine]
 )
 # MPTT_ADMIN_LEVEL_INDENT = 20
 
