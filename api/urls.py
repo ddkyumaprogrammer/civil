@@ -10,7 +10,7 @@ router.register(r'replaces', RepViewSet)
 # router.register(r'session-by-id', SessionidViewSet)
 
 urlpatterns = [
-    url(r'get-childern-by-token/',get_childern_view_by_token),
+    url(r'get-children/',get_children),
     url(r'get_self_rank/',get_self_rank),
     url(r'get-sessions-by-date/',get_sessions_by_date),
     url(r'session-by-id/', get_session_by_id),

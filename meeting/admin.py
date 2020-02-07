@@ -22,7 +22,7 @@ class MyDraggableMPTTAdmin(DraggableMPTTAdmin):
     something.short_description = ('something nice')
 
 class RanksInLine(admin.TabularInline):
-    model = Ranks.blocked_users.through
+    model = Ranks.extra_users.through
     extra = 1
     fk_name = 'from_ranks'
     can_delete = True

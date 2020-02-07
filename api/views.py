@@ -288,80 +288,40 @@ def get_self_rank(request):
     return JsonResponse(response, safe=False)
 
 
-@api_view(['POST'])
-def get_childern_view_by_token(request):
-    try:
-        ranks = Ranks.objects.all()
-    except Ranks.DoesNotExist:
-        return HttpResponse('جایگاهی تعریف نشده است.', status=500)
-    childern = {}
-    r = []
-    _parent_id = []
-    try:
-        if request.data.get('rank_name'):
-            _ranks = Ranks.objects._mptt_filter(rank_owner=request.user, rank_name=request.data.get('rank_name'))
-        else:
-            _ranks = Ranks.objects._mptt_filter(rank_owner=request.user)
-    except Ranks.DoesNotExist:
-        return HttpResponse('جایگاهی برای شما تعریف نشده است.', status=500)
-    for _rank in _ranks:
-        _parent_id.append(_rank.id)
-
-    if _parent_id == []:
-        return HttpResponse('جایگاهی برای شما تعریف نشده است.', status=500)
-    else:
-        for _rank in _ranks:
-            childs = {}
-            pids = []
-            pids.append(_rank.id)
-            for pid in pids:
-                for rank in ranks:
-                    if rank.tree_id == _rank.tree_id:
-                        if pid == rank.parent_id:
-                            if rank.rank_owner_id is not None:
-                                c = rank.rank_owner_id
-                                if c in childs.keys():
-                                    pass
-                                else:
-                                    pic = ("http://185.211.57.73/static/uploads/%s" % rank.rank_owner.image)
-
-                                    # title = rank.rank_owner.first_name + " " + rank.rank_owner.last_name
-                                    # slug = slugify(title)
-                                    # basename, file_extension = rank.rank_owner.image.split(".")
-                                    # new_filename = "%s.%s" % (slug, file_extension)
-                                    child = {"rank_name": rank.rank_name, "id": rank.rank_owner.id,
-                                             "first_name": rank.rank_owner.first_name,
-                                             "last_name": rank.rank_owner.last_name, "mobile": rank.rank_owner.mobile,
-                                             "is_legal": rank.rank_owner.is_legal,
-                                             # "pic":"http://185.211.57.73/static/uploads/%s" % (rank.rank_owner.image)
-                                             "pic": pic
-                                             }
-                                    r.append(child)
-                                    childs[rank.rank_name] = child
-                                    child = {}
-                            p = rank.id
-                            if p in pids:
-                                pass
-                            else:
-                                pids.append(rank.id)
-            if request.data.get('rank_name'):
-                _rank_ = Ranks.objects.get(rank_owner=request.user, rank_name=request.data.get('rank_name'))
-            else:
-                _rank_ = Ranks.objects.get(rank_owner=request.user)
-
-            childern["جایگاه"] = _rank_.rank_name
-            childern["تعداد کل"] = len(r)
-            childern["لیست"] = r
-        t = 0
-        for i in childern.values():
-            if i:
-                t += 1
-            else:
-                t += 0
-        if t == 0:
-            return HttpResponse('شما زیردستی ندارید.', status=500)
-        else:
-            return JsonResponse(childern, safe=False)
+@api_view(['GET'])
+def get_children(request):
+    self_rank = Ranks.objects._mptt_filter(rank_owner=request.user)
+    children = Ranks.objects.get(pk=self_rank[0].pk).get_descendants()
+    result = []
+    for child in children:
+        result.append({
+            "rank_name": child.rank_name,
+            "id": child.rank_owner.id,
+            "first_name": child.rank_owner.first_name,
+            "last_name": child.rank_owner.last_name,
+            "mobile": child.rank_owner.mobile,
+            "pic": "http://185.211.57.73/static/uploads/%s" % child.rank_owner.image
+        })
+    if self_rank[0].parent is not None and self_rank[0].secretary is True:
+        result.append({
+            "rank_name": self_rank[0].parent.rank_name,
+            "id": self_rank[0].parent.rank_owner.id,
+            "first_name": self_rank[0].parent.rank_owner.first_name,
+            "last_name": self_rank[0].parent.rank_owner.last_name,
+            "mobile": self_rank[0].parent.rank_owner.mobile,
+            "pic": "http://185.211.57.73/static/uploads/%s" % self_rank[0].parent.rank_owner.image
+        })
+    children = Ranks.objects.get(pk=self_rank[0].pk).extra_parents.all()
+    for child in children:
+        result.append({
+            "rank_name": child.rank_name,
+            "id": child.rank_owner.id,
+            "first_name": child.rank_owner.first_name,
+            "last_name": child.rank_owner.last_name,
+            "mobile": child.rank_owner.mobile,
+            "pic": "http://185.211.57.73/static/uploads/%s" % child.rank_owner.image
+        })
+    return JsonResponse(result, safe=False)
 
 
 @api_view(['POST'])

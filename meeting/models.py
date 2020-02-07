@@ -85,8 +85,8 @@ class Ranks(MPTTModel):
     secretary = models.BooleanField(null=False, default=False, verbose_name='دفتردار')
     parent = TreeForeignKey('self', null=True, blank=True, verbose_name='جایگاه بالا دستی', related_name='childern',
                             db_index=True, on_delete=models.CASCADE)
-    blocked_users = models.ManyToManyField('self', blank=True, null=True, verbose_name='سایر',
-                                           related_name='extra_users',editable=False)
+    extra_users = models.ManyToManyField('self', blank=True, null=True, verbose_name='سایر',
+                                           related_name='extra_parents',editable=False, symmetrical=False)
 
     class MPTTMeta:
         level_attr = 'mptt_level'
