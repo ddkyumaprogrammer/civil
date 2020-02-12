@@ -7,7 +7,7 @@ celery==4.3.0
 certifi==2019.3.9
 chardet==3.0.4
 dataclasses==0.6
-Django==2.1.7
+Django==2.2.10
 django-celery-beat==1.5.0
 django-constance==2.4.0
 django-crontab==0.7.1
