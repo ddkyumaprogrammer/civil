@@ -31,180 +31,160 @@ class SessionsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
-        force = self.request.data.get('force')
-        intrposition = []
+        interposition = False
         myformat = '%Y-%m-%d %H:%M:%S'
-        sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).date()
-        edate = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).date()
-        stime = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).time()
-        etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
         force = self.request.data.get('force')
 
-        ppls = []
-        ppls.append(request.user.mobile)
-        if 'audiences' in request.data:
-            audiences = request.data.get('audiences')[0].values()
-            for audience in audiences:
-                for i in audience:
-                    ppls.append(i)
-        ppl_ower_name = []
-        ppl_ower_id = []
-        ppl_aud_name = []
-        ppl_aud_id = []
-        ppl_rep_name = []
-        ppl_rep_id = []
-        for ppl in ppls:
-            try:
-                ppl_id = Peoples.objects.get(mobile=ppl).id
-            except Peoples.DoesNotExist:
-                ppl = None
+        sdate = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).date()
+        stime = datetime.datetime.strptime(str(self.request.data.get('start_time')), myformat).time()
 
-            try:
-                _sessions = Sessions.objects.filter(meeting_owner_id=ppl_id)
-            except Sessions.DoesNotExist:
-                _sessions = None
+        edate = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).date()
+        etime = datetime.datetime.strptime(str(self.request.data.get('end_time')), myformat).time()
 
-            try:
-                ppl_audiences = Audiences.objects.filter(people_id=ppl_id)
-            except Audiences.DoesNotExist:
-                ppl_audiences = None
+        if force == 0:
+            ppls = []
+            if 'audiences' in request.data:
+                audiences = request.data.get('audiences')
+                for audience in audiences:
+                    ppls.append(audience)
 
-            try:
-                rep_audiences = Audiences.objects.filter(rep_ppl_id=ppl_id)
-            except Audiences.DoesNotExist:
-                rep_audiences = None
-            for _session in _sessions:
-                s = {}
-                if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
-                    if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
-                        s[str(_session.meeting_owner.first_name) + ' ' + str(_session.meeting_owner.last_name)] = str(
-                            _session.id)
-                        intrposition.append(s)
-                        ppl_ower_name.append(_session.meeting_owner.id)
-                        ppl_ower_id.append(_session.id)
-            for ppl_audience in ppl_audiences:
-                k = {}
-                if str(ppl_audience.session.start_time.date()) == str(sdate) or str(
-                        ppl_audience.session.end_time.date()) == str(
-                    edate):
-                    if stime <= ppl_audience.session.end_time.time() <= etime or stime <= ppl_audience.session.start_time.time() <= etime:
-                        k[str(ppl_audience.people.first_name) + " " + str(ppl_audience.people.last_name)] = str(
-                            ppl_audience.session.id)
-                        intrposition.append(k)
-                        ppl_aud_name.append(ppl_audience.people.id)
-                        ppl_aud_id.append(ppl_audience.session.id)
-            for rep_audience in rep_audiences:
-                k = {}
-                if str(rep_audience.session.start_time.date()) == str(sdate) or str(
-                        rep_audience.session.end_time.date()) == str(
-                    edate):
-                    if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
-                        k[str(rep_audience.people.first_name) + " " + str(rep_audience.people.last_name)] = str(
-                            rep_audience.session.id)
-                        intrposition.append(k)
-                        ppl_rep_name.append(rep_audience.rep_ppl.id)
-                        ppl_rep_id.append(rep_audience.session.id)
+            if request.data.get("selfPresent"):
+                owner = Peoples.objects.get(id=request.user.id)
+                ppls.append({"people": owner.mobile})
 
-        owner = len(ppl_ower_name)
-        aud = len(ppl_aud_name)
-        rep = len(ppl_rep_name)
-        ppl_ower = []
-        ppl_aud = []
-        ppl_rep = []
-        for i in range(owner):
-            w = {}
-            w[ppl_ower_name[i]] = ppl_ower_id[i]
-            ppl_ower.append(w)
-        for i in range(aud):
-            w = {}
-            w[ppl_aud_name[i]] = ppl_aud_id[i]
-            ppl_aud.append(w)
-        for i in range(rep):
-            w = {}
-            w[ppl_rep_name[i]] = ppl_rep_id[i]
-            ppl_rep.append(w)
-        no_dupes_owner = [x for n, x in enumerate(ppl_ower) if x not in ppl_ower[:n]]
-        no_dupes_aud = [x for n, x in enumerate(ppl_aud) if x not in ppl_aud[:n]]
-        no_dupes_rep = [x for n, x in enumerate(ppl_rep) if x not in ppl_rep[:n]]
-        ppl_sesion = {}
-        ppl_sesion["تشکیل دهنده"] = no_dupes_owner
-        ppl_sesion["دعوت شده"] = no_dupes_aud
-        ppl_sesion["جایگزین"] = no_dupes_rep
+            for ppl in ppls:
+                ppl_id = None
+                try:
+                    ppl_id = Peoples.objects.get(mobile=ppl["people"]).id
+                except Peoples.DoesNotExist:
+                    ppl = None
+                if ppl_id is None:
+                    continue
 
-        # ppl_sesionp = {}
-        # ppl_sesionp["تشکیل دهنده"] = ppl_ower
-        # ppl_sesionp["دعوت شده"] = ppl_aud
-        # ppl_sesionp["جایگزین"] = ppl_rep
-        # print(ppl_sesionp)
+                try:
+                    _sessions = Sessions.objects.filter(meeting_owner_id=ppl_id)
+                except Sessions.DoesNotExist:
+                    _sessions = None
 
-        if intrposition != [] and force == 0:
-            return JsonResponse(ppl_sesion, safe=False)
-            # return Response( ','.join(map(str, intrposition))+"--"+"تداخل با جلسه")
+                try:
+                    ppl_audiences = Audiences.objects.filter(people_id=ppl_id)
+                except Audiences.DoesNotExist:
+                    ppl_audiences = None
 
+                try:
+                    rep_audiences = Audiences.objects.filter(rep_ppl_id=ppl_id)
+                except Audiences.DoesNotExist:
+                    rep_audiences = None
 
-        else:
-            if serializer.is_valid(raise_exception=True):
-                obj = serializer.save(meeting_owner=request.user)
-                obj.created_time = jdatetime.datetime.now()
-                obj.save()
-                # obj = Sessions.objects.get(meeting_title=request.data.get('title'))
-                # obj.meeting_owner = request.user
-                # obj.save()
-                if 'audiences' in request.data:
+                for _session in _sessions:
+                    if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
+                        if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
+                            interposition = True
 
-                    # adding audiences to session
-                    audiences = request.data.get('audiences')
+                if interposition:
+                    break
+                for ppl_audience in ppl_audiences:
+                    if str(ppl_audience.session.start_time.date()) == str(sdate) or str(
+                            ppl_audience.session.end_time.date()) == str(edate):
+                        if stime <= ppl_audience.session.end_time.time() <= etime or stime <= ppl_audience.session.start_time.time() <= etime:
+                            interposition = True
+
+                if interposition:
+                    break
+                for rep_audience in rep_audiences:
+                    if str(rep_audience.session.start_time.date()) == str(sdate) or str(
+                            rep_audience.session.end_time.date()) == str(edate):
+                        if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
+                            interposition = True
+
+            ppl_sesion = {"interposition": interposition}
+
+            if interposition:
+                return JsonResponse(ppl_sesion, safe=False)
+
+        if serializer.is_valid(raise_exception=True):
+            obj = serializer.save(meeting_owner=request.user)
+            obj.created_time = jdatetime.datetime.now()
+            obj.save()
+            # obj = Sessions.objects.get(meeting_title=request.data.get('title'))
+            # obj.meeting_owner = request.user
+            # obj.save()
+            if 'audiences' in request.data:
+
+                # adding audiences to session
+                audiences = request.data.get('audiences')
+                try:
+                    sessn = Sessions.objects.get(id=obj.id).id
+                except Sessions.DoesNotExist:
+                    sessn = None
+
+                # see if owner is added and add him manually
+                # otherwise just ignore him
+                if request.data.get('selfPresent'):
+                    try:
+                        ppl = Peoples.objects.get(id=request.user.id)
+                        Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn, seen=True)
+                    except Peoples.DoesNotExist:
+                        ppl = None
+                    Audiences.objects.create(session_id=sessn, people=ppl)
+                    cred = credentials.Certificate('./civilportal.json')
+                    try:
+                        default_app = firebase_admin.initialize_app(cred)
+                    except Exception as e:
+                        print(e)
+                    if ppl is not None:
+                        token = ppl.fcm_token
+                        if token is not None:
+                            mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(
+                                sdate, stime)
+                            message = messaging.Message(
+                                data={
+                                    "body": mess
+                                },
+                                android=messaging.AndroidConfig(priority="high"),
+                                token=token,
+                            )
+                            try:
+                                messaging.send(message)
+                            except Exception as e:
+                                print('Messaging Error')
+
+                for audience in audiences:
                     try:
                         sessn = Sessions.objects.get(id=obj.id).id
                     except Sessions.DoesNotExist:
                         sessn = None
+                    try:
+                        ppl = Peoples.objects.get(mobile=audience.get('people'))
+                        Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
+                    except Peoples.DoesNotExist:
+                        ppl = None
+                    Audiences.objects.create(session_id=sessn, people=ppl)
 
-                    # see if owner is added and add him manually
-                    # otherwise just ignore him
-                    if request.data.get('selfPresent'):
-                        try:
-                            ppl = Peoples.objects.get(id=request.user.id)
-                            Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn, seen=True)
-                        except Peoples.DoesNotExist:
-                            ppl = None
-                        Audiences.objects.create(session_id=sessn, people=ppl)
+                    cred = credentials.Certificate('./civilportal.json')
+                    try:
+                        default_app = firebase_admin.initialize_app(cred)
+                    except Exception as e:
+                        print(e)
+                    if ppl is not None:
+                        token = ppl.fcm_token
+                        if token is not None:
+                            mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(
+                                sdate, stime)
+                            message = messaging.Message(
+                                data={
+                                    "body": mess
+                                },
+                                android=messaging.AndroidConfig(priority="high"),
+                                token=token,
+                            )
+                            try:
+                                messaging.send(message)
+                            except Exception as e:
+                                print('Messaging Error')
 
-                    for audience in audiences:
-                        try:
-                            sessn = Sessions.objects.get(id=obj.id).id
-                        except Sessions.DoesNotExist:
-                            sessn = None
-                        try:
-                            ppl = Peoples.objects.get(mobile=audience.get('people'))
-                            Seens.objects.create(ppl_id=ppl.id, sesion_id=sessn)
-                        except Peoples.DoesNotExist:
-                            ppl = None
-                        Audiences.objects.create(session_id=sessn, people=ppl)
-
-                        cred = credentials.Certificate('/opt/w/civil/civilportal.json')
-                        try:
-                            default_app = firebase_admin.initialize_app(cred)
-                        except Exception as e:
-                            print(e)
-                        if ppl is not None:
-                            token = ppl.fcm_token
-                            if token is not None:
-                                mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(
-                                    sdate, stime)
-                                message = messaging.Message(
-                                    data={
-                                        "body": mess
-                                    },
-                                    android={"priority": "high"},
-                                    token=token,
-                                )
-                                try:
-                                    messaging.send(message)
-                                except Exception as e:
-                                    print('Messaging Error')
-
-                headers = self.get_success_headers(serializer.data)
-                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
         session = self.get_object()
@@ -291,7 +271,10 @@ def get_self_rank(request):
 @api_view(['GET'])
 def get_children(request):
     self_rank = Ranks.objects._mptt_filter(rank_owner=request.user)
-    children = Ranks.objects.get(pk=self_rank[0].pk).get_descendants()
+    if self_rank[0].parent is not None and self_rank[0].secretary is True:
+        children = Ranks.objects.get(pk=self_rank[0].parent.pk).get_descendants()
+    else:
+        children = Ranks.objects.get(pk=self_rank[0].pk).get_descendants()
     result = []
     for child in children:
         result.append({
@@ -301,15 +284,6 @@ def get_children(request):
             "last_name": child.rank_owner.last_name,
             "mobile": child.rank_owner.mobile,
             "pic": "http://185.211.57.73/static/uploads/%s" % child.rank_owner.image
-        })
-    if self_rank[0].parent is not None and self_rank[0].secretary is True:
-        result.append({
-            "rank_name": self_rank[0].parent.rank_name,
-            "id": self_rank[0].parent.rank_owner.id,
-            "first_name": self_rank[0].parent.rank_owner.first_name,
-            "last_name": self_rank[0].parent.rank_owner.last_name,
-            "mobile": self_rank[0].parent.rank_owner.mobile,
-            "pic": "http://185.211.57.73/static/uploads/%s" % self_rank[0].parent.rank_owner.image
         })
     children = Ranks.objects.get(pk=self_rank[0].pk).extra_parents.all()
     for child in children:
@@ -352,7 +326,7 @@ def set_fcm_token(request):
 
 @api_view(['POST'])
 def call_fcm(request):
-    cred = credentials.Certificate('/opt/w/civil/civilportal.json')
+    cred = credentials.Certificate('./civilportal.json')
 
     try:
         default_app = firebase_admin.initialize_app(cred)
@@ -365,7 +339,7 @@ def call_fcm(request):
             "messageFrom": "Vouch!",
             "body": "برای شما در تاریخ 18 مهر جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید"
         },
-        android={"priority": "high"},
+        android=messaging.AndroidConfig(priority="high"),
         token=token,
     )
     response = messaging.send(message)
@@ -378,99 +352,79 @@ class RepViewSet(viewsets.ModelViewSet):
     serializer_class = AudienceSerializer
 
     def create(self, request, *args, **kwargs):
-        try:
-            ppl_id = request.user.id
-            session_id = request.data.get('session_id')
-            _rep_ppl = Peoples.objects.get(id=request.data.get('rep_ppl'))
-            force = self.request.data.get('force')
-        except:
-            _rep_ppl = None
-            session_id = None
+        ppl_id = request.user.id
+        session_id = request.data.get('session_id')
+        _rep_ppl = Peoples.objects.get(id=request.data.get('rep_ppl'))
+        force = self.request.data.get('force')
 
-        intrposition = []
+        intrposition = False
         myformat = '%Y-%m-%d %H:%M:%S'
         session = Sessions.objects.get(id=session_id)
         sdate = datetime.datetime.strptime(str(session.start_time), myformat).date()
-        edate = datetime.datetime.strptime(str(session.end_time), myformat).date()
         stime = datetime.datetime.strptime(str(session.start_time), myformat).time()
+        edate = datetime.datetime.strptime(str(session.end_time), myformat).date()
         etime = datetime.datetime.strptime(str(session.end_time), myformat).time()
 
-        try:
-            _sessions = Sessions.objects.filter(meeting_owner_id=_rep_ppl.id)
-        except Sessions.DoesNotExist:
-            _sessions = None
+        if force == 0:
+            try:
+                _audiences = Audiences.objects.filter(people_id=_rep_ppl.id)
+            except Audiences.DoesNotExist:
+                _audiences = None
 
-        try:
-            _audiences = Audiences.objects.filter(people_id=_rep_ppl.id)
-        except Audiences.DoesNotExist:
-            _audiences = None
+            try:
+                rep_audiences = Audiences.objects.filter(rep_ppl=_rep_ppl.id)
+            except Audiences.DoesNotExist:
+                rep_audiences = None
 
-        try:
-            rep_audiences = Audiences.objects.filter(rep_ppl=_rep_ppl.id)
-        except Audiences.DoesNotExist:
-            rep_audiences = None
+            for _audience in _audiences:
+                if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
+                        edate):
+                    if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
+                        intrposition = True
+                        break
 
-        for _session in _sessions:
-            if str(_session.start_time.date()) == str(sdate) or str(_session.end_time.date()) == str(edate):
-                if stime <= _session.end_time.time() <= etime or stime <= _session.start_time.time() <= etime:
-                    s = {}
-                    s["تشکیل دهنده"] = str(
-                        _session.meeting_title)
-                    intrposition.append(s)
-        for _audience in _audiences:
-            if str(_audience.session.start_time.date()) == str(sdate) or str(_audience.session.end_time.date()) == str(
-                    edate):
-                if stime <= _audience.session.end_time.time() <= etime or stime <= _audience.session.start_time.time() <= etime:
-                    a = {}
-                    a["دعوت شده"] = str(
-                        _audience.session.meeting_title)
-                    intrposition.append(a)
+            for rep_audience in rep_audiences:
+                if str(rep_audience.session.start_time.date()) == str(sdate) or str(
+                        rep_audience.session.end_time.date()) == str(edate):
+                    if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
+                        intrposition = True
 
-        for rep_audience in rep_audiences:
-            if str(rep_audience.session.start_time.date()) == str(sdate) or str(
-                    rep_audience.session.end_time.date()) == str(edate):
-                if stime <= rep_audience.session.end_time.time() <= etime or stime <= rep_audience.session.start_time.time() <= etime:
-                    r = {}
-                    r["جایگزین"] = str(
-                        rep_audience.session.meeting_title)
-                    intrposition.append(r)
+            if intrposition:
+                return JsonResponse({"interposition": intrposition}, safe=False)
 
-        if intrposition != [] and force == 0:
-            return Response(', '.join(map(str, intrposition)) + "تداخل با جلسه:")
-        else:
-            if Audiences.objects.get(people=ppl_id, session=session_id):
-                obj = Audiences.objects.get(people=ppl_id, session=session_id)
-                obj.rep_ppl = _rep_ppl
-                obj.save()
-                try:
-                    Seens.objects.get(ppl_id=_rep_ppl.id, sesion_id=session_id)
-                except Seens.DoesNotExist:
-                    Seens.objects.create(ppl_id=_rep_ppl.id, sesion_id=session_id)
+        if Audiences.objects.get(people_id=ppl_id, session=session_id):
+            obj = Audiences.objects.get(people=ppl_id, session=session_id)
+            obj.rep_ppl = _rep_ppl
+            obj.save()
+            try:
+                Seens.objects.get(ppl_id=_rep_ppl.id, sesion_id=session_id)
+            except Seens.DoesNotExist:
+                Seens.objects.create(ppl_id=_rep_ppl.id, sesion_id=session_id)
 
-                cred = credentials.Certificate('/opt/w/civil/civilportal.json')
-                # cred = credentials.Certificate('civilportal.json')
-                try:
-                    default_app = firebase_admin.initialize_app(cred)
-                except Exception as e:
-                    print(e)
-                if obj.rep_ppl is not None:
-                    token = obj.rep_ppl.fcm_token
-                    if token is not None:
-                        mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(
-                            sdate, stime)
-                        message = messaging.Message(
-                            data={
-                                "body": mess
-                            },
-                            android={"priority": "high"},
-                            token=token,
-                        )
-                        try:
-                            messaging.send(message)
-                        except Exception as e:
-                            print('Messaging Error')
-                leads_as_json = serializers.serialize('json', [obj, ])
-                return HttpResponse(leads_as_json, content_type='json')
+            cred = credentials.Certificate('./civilportal.json')
+            # cred = credentials.Certificate('civilportal.json')
+            try:
+                default_app = firebase_admin.initialize_app(cred)
+            except Exception as e:
+                print(e)
+            if obj.rep_ppl is not None:
+                token = obj.rep_ppl.fcm_token
+                if token is not None:
+                    mess = "برای شما در تاریخ {} ساعت {} جلسه ای تایین شده است برای اطلاع بیشتر به اپ مراجعه نمایید".format(
+                        sdate, stime)
+                    message = messaging.Message(
+                        data={
+                            "body": mess
+                        },
+                        android=messaging.AndroidConfig(priority="high"),
+                        token=token,
+                    )
+                    try:
+                        messaging.send(message)
+                    except Exception as e:
+                        print('Messaging Error')
+            leads_as_json = serializers.serialize('json', [obj, ])
+            return HttpResponse(leads_as_json, content_type='json')
 
 
 @api_view(['POST'])
