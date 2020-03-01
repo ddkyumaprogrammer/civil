@@ -10,6 +10,8 @@ router.register(r'replaces', RepViewSet)
 # router.register(r'session-by-id', SessionidViewSet)
 
 urlpatterns = [
+    url(r'events_shamsi/',events_shamsi),
+    url(r'events_hijri/',hijri_events),
     url(r'get-children/',get_children),
     url(r'get_self_rank/',get_self_rank),
     url(r'get-sessions-by-date/',get_sessions_by_date),
