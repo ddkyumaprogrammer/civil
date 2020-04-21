@@ -272,11 +272,21 @@ def get_self_rank(request):
 def get_children(request):
     self_rank = Ranks.objects._mptt_filter(rank_owner=request.user)
     if self_rank[0].parent is not None and self_rank[0].secretary is True:
-        children = Ranks.objects.get(pk=self_rank[0].parent.pk).get_descendants()
+        children = Ranks.objects.get(pk=self_rank[0].parent.pk).get_children()
     else:
-        children = Ranks.objects.get(pk=self_rank[0].pk).get_descendants()
+        children = Ranks.objects.get(pk=self_rank[0].pk).get_children()
     result = []
     for child in children:
+        result.append({
+            "rank_name": child.rank_name,
+            "id": child.rank_owner.id,
+            "first_name": child.rank_owner.first_name,
+            "last_name": child.rank_owner.last_name,
+            "mobile": child.rank_owner.mobile,
+            "pic": "http://185.211.57.73/static/uploads/%s" % child.rank_owner.image
+        })
+    if self_rank[0].secretary is True:
+        child = Ranks.objects.get(pk=self_rank[0].parent.pk)
         result.append({
             "rank_name": child.rank_name,
             "id": child.rank_owner.id,
@@ -562,6 +572,7 @@ def seen_session_by_ppl(request):
         'seen': str(_seen.seen),
     })
     return JsonResponse(obj, safe=False)
+
 
 @api_view(['GET'])
 def events_shamsi(request):
@@ -948,6 +959,7 @@ def events_shamsi(request):
     }
     return JsonResponse(shamsi, safe=False)
 
+
 @api_view(['GET'])
 def hijri_events(request):
     hijri = {
@@ -957,7 +969,8 @@ def hijri_events(request):
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                   0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                   0,
                    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
